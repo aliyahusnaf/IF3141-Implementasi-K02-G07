@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <record id="view_m4fr_client_list" model="ir.ui.view">
+        <field name="name">m4fr.client.list</field>
+        <field name="model">res.partner</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="name" string="Nama Klien"/>
+                <field name="email"/>
+                <field name="phone"/>
+                <field name="street" string="Alamat"/>
+                <field name="city" string="Kota"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_m4fr_client_form" model="ir.ui.view">
+        <field name="name">m4fr.client.form</field>
+        <field name="model">res.partner</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_view_orders"
+                                type="object"
+                                class="oe_stat_button"
+                                icon="fa-shopping-cart">
+                            <span class="o_stat_text">Pesanan</span>
+                        </button>
+                    </div>
+                    <group>
+                        <group string="Informasi Klien">
+                            <field name="name" string="Nama"/>
+                            <field name="email"/>
+                            <field name="phone" string="No. Kontak"/>
+                        </group>
+                        <group string="Alamat">
+                            <field name="street" string="Alamat"/>
+                            <field name="city" string="Kota"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_m4fr_clients" model="ir.actions.act_window">
+        <field name="name">Pelanggan</field>
+        <field name="res_model">res.partner</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('customer_rank', '>', 0)]</field>
+        <field name="view_ids" eval="[
+            (5, 0, 0),
+            (0, 0, {'view_mode': 'tree', 'view_id': ref('view_m4fr_client_list')}),
+            (0, 0, {'view_mode': 'form', 'view_id': ref('view_m4fr_client_form')}),
+        ]"/>
+    </record>
+
+</odoo>

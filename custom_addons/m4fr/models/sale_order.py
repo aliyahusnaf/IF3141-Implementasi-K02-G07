@@ -1,0 +1,106 @@
+from odoo import api, fields, models
+from odoo.exceptions import UserError
+
+PRODUCTION_STATUS_SEQUENCE = [
+    'pending',
+    'material_received',
+    'cutting',
+    'sewing',
+    'qc',
+    'done',
+]
+
+PRODUCTION_STATUS_LABEL = {
+    'pending': 'Belum Dimulai',
+    'material_received': 'Bahan Diterima',
+    'cutting': 'Proses Cutting',
+    'sewing': 'Proses Jahit',
+    'qc': 'QC',
+    'done': 'Selesai',
+}
+
+
+class SaleOrderM4FR(models.Model):
+    _inherit = 'sale.order'
+
+    is_locked = fields.Boolean(
+        string='Terkunci',
+        default=False,
+        tracking=True,
+        help='Di-set True oleh D2 setelah pelunasan penuh diterima.',
+    )
+    deadline_at = fields.Datetime(
+        string='Tenggat Waktu',
+        tracking=True,
+    )
+    production_status = fields.Selection(
+        selection=[
+            ('pending', 'Belum Dimulai'),
+            ('material_received', 'Bahan Diterima'),
+            ('cutting', 'Proses Cutting'),
+            ('sewing', 'Proses Jahit'),
+            ('qc', 'QC'),
+            ('done', 'Selesai'),
+        ],
+        string='Status Produksi',
+        default='pending',
+        tracking=True,
+    )
+    order_status_ids = fields.One2many(
+        'm4fr.order.status', 'order_id',
+        string='Riwayat Status Produksi',
+    )
+    # Computed: tahap produksi berikutnya (untuk ditampilkan di UI)
+    next_production_status = fields.Char(
+        string='Tahap Berikutnya',
+        compute='_compute_next_production_status',
+    )
+    is_production_done = fields.Boolean(
+        compute='_compute_next_production_status',
+    )
+
+    @api.depends('production_status')
+    def _compute_next_production_status(self):
+        for rec in self:
+            current_idx = PRODUCTION_STATUS_SEQUENCE.index(rec.production_status)
+            if current_idx < len(PRODUCTION_STATUS_SEQUENCE) - 1:
+                next_key = PRODUCTION_STATUS_SEQUENCE[current_idx + 1]
+                rec.next_production_status = PRODUCTION_STATUS_LABEL[next_key]
+                rec.is_production_done = False
+            else:
+                rec.next_production_status = ''
+                rec.is_production_done = True
+
+    def write(self, vals):
+        old_states = {rec.id: rec.state for rec in self}
+        result = super().write(vals)
+        if 'state' in vals or 'is_locked' in vals:
+            for rec in self:
+                new_state = 'locked' if rec.is_locked else rec.state
+                old_state = old_states[rec.id]
+                loggable = {'draft', 'sale', 'locked'}
+                if new_state in loggable and old_state != new_state:
+                    self.env['m4fr.order.status'].create({
+                        'order_id': rec.id,
+                        'status': new_state,
+                        'changed_by': self.env.user.id,
+                    })
+        return result
+
+    def action_open_update_production_status(self):
+        self.ensure_one()
+        if self.state not in ('sale', 'done'):
+            raise UserError('Status produksi hanya bisa diperbarui pada pesanan yang sudah dikonfirmasi.')
+        if self.is_production_done:
+            raise UserError('Semua tahap produksi sudah selesai.')
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Update Status Produksi',
+            'res_model': 'm4fr.update.production.status.wizard',
+            'view_mode': 'form',
+            'target': 'new',
+            'context': {
+                'default_order_id': self.id,
+                'default_current_status': self.production_status,
+            },
+        }

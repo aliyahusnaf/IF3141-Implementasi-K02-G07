@@ -1,0 +1,9 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_order_status_direktur,order.status.direktur,model_m4fr_order_status,m4fr.group_direktur,1,0,0,0
+access_order_status_admin,order.status.admin,model_m4fr_order_status,m4fr.group_admin,1,1,1,0
+access_order_status_manajer_produksi,order.status.manajer_produksi,model_m4fr_order_status,m4fr.group_manajer_produksi,1,0,0,0
+access_order_status_kepala_produksi,order.status.kepala_produksi,model_m4fr_order_status,m4fr.group_kepala_produksi,1,0,1,0
+access_order_status_manajer_keuangan,order.status.manajer_keuangan,model_m4fr_order_status,m4fr.group_manajer_keuangan,1,0,0,0
+access_upd_prod_wizard_admin,upd.prod.wizard.admin,model_m4fr_update_production_status_wizard,m4fr.group_admin,1,1,1,1
+access_upd_prod_wizard_kepala,upd.prod.wizard.kepala,model_m4fr_update_production_status_wizard,m4fr.group_kepala_produksi,1,1,1,1
+access_order_status_direktur_write,order.status.direktur.write,model_m4fr_order_status,m4fr.group_direktur,1,1,1,1

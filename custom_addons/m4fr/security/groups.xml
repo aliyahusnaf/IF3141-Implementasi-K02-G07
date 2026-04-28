@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <record id="module_category_m4fr" model="ir.module.category">
+            <field name="name">M4FR Ataya</field>
+            <field name="sequence">100</field>
+        </record>
+
+        <!-- JB-05: Kepala Produksi — akses mutasi stok + update status produksi -->
+        <record id="group_kepala_produksi" model="res.groups">
+            <field name="name">Kepala Produksi</field>
+            <field name="category_id" ref="module_category_m4fr"/>
+        </record>
+
+        <!-- JB-04: Admin — akses penjualan + inventaris -->
+        <record id="group_admin" model="res.groups">
+            <field name="name">Admin</field>
+            <field name="category_id" ref="module_category_m4fr"/>
+        </record>
+
+        <!-- JB-03: Manajer Produksi — pesanan read-only -->
+        <record id="group_manajer_produksi" model="res.groups">
+            <field name="name">Manajer Produksi</field>
+            <field name="category_id" ref="module_category_m4fr"/>
+        </record>
+
+        <!-- JB-02: Manajer Keuangan — akuntansi + penjualan read -->
+        <record id="group_manajer_keuangan" model="res.groups">
+            <field name="name">Manajer Keuangan</field>
+            <field name="category_id" ref="module_category_m4fr"/>
+        </record>
+
+        <!-- JB-01: Direktur — akses penuh, implies semua grup di bawah -->
+        <record id="group_direktur" model="res.groups">
+            <field name="name">Direktur</field>
+            <field name="category_id" ref="module_category_m4fr"/>
+            <field name="implied_ids" eval="[
+                (4, ref('group_manajer_keuangan')),
+                (4, ref('group_manajer_produksi')),
+                (4, ref('group_admin')),
+                (4, ref('group_kepala_produksi')),
+            ]"/>
+        </record>
+
+    </data>
+</odoo>
