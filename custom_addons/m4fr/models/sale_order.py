@@ -1,5 +1,5 @@
 from odoo import api, fields, models
-from odoo.exceptions import UserError
+from odoo.exceptions import UserError, AccessError
 
 PRODUCTION_STATUS_SEQUENCE = [
     'pending',
@@ -72,12 +72,17 @@ class SaleOrderM4FR(models.Model):
                 rec.is_production_done = True
 
     def write(self, vals):
+        # RBAC Check: Hanya Admin (JB-04) atau Direktur (JB-01) yang boleh mengubah deadline_at
+        if 'deadline_at' in vals:
+            if not (self.env.user.has_group('m4fr.group_m4fr_admin') or self.env.user.has_group('m4fr.group_m4fr_direktur')):
+                raise AccessError("Hanya Admin atau Direktur yang diperbolehkan mengubah Tenggat Waktu.")
+
         old_states = {rec.id: rec.state for rec in self}
         result = super().write(vals)
         if 'state' in vals or 'is_locked' in vals:
             for rec in self:
                 new_state = 'locked' if rec.is_locked else rec.state
-                old_state = old_states[rec.id]
+                old_state = old_states[get_id] if (get_id := rec.id) in old_states else False
                 loggable = {'draft', 'sale', 'locked'}
                 if new_state in loggable and old_state != new_state:
                     self.env['m4fr.order.status'].create({
@@ -89,6 +94,12 @@ class SaleOrderM4FR(models.Model):
 
     def action_open_update_production_status(self):
         self.ensure_one()
+        # RBAC Check: Hanya Kepala Produksi, Admin, atau Direktur
+        if not (self.env.user.has_group('m4fr.group_m4fr_kepala_produksi') or 
+                self.env.user.has_group('m4fr.group_m4fr_admin') or 
+                self.env.user.has_group('m4fr.group_m4fr_direktur')):
+            raise AccessError("Anda tidak memiliki akses untuk memperbarui status produksi.")
+
         if self.state not in ('sale', 'done'):
             raise UserError('Status produksi hanya bisa diperbarui pada pesanan yang sudah dikonfirmasi.')
         if self.is_production_done:
@@ -99,8 +110,5 @@ class SaleOrderM4FR(models.Model):
             'res_model': 'm4fr.update.production.status.wizard',
             'view_mode': 'form',
             'target': 'new',
-            'context': {
-                'default_order_id': self.id,
-                'default_current_status': self.production_status,
-            },
+            'context': {'default_order_id': self.id},
         }

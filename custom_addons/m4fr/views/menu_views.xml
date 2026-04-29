@@ -1,46 +1,48 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <!-- Root Menu -->
+    <menuitem id="menu_m4fr_root" 
+              name="M4FR" 
+              web_icon="m4fr,static/description/icon_penjualan.png"
+              sequence="10"/>
 
-    <!-- ── Root menu Penjualan ──────────────────────────────────────────────── -->
-    <menuitem id="menu_m4fr_penjualan_root"
+    <!-- Menu Penjualan -->
+    <menuitem id="menu_m4fr_penjualan"
               name="Penjualan"
-              sequence="20"/>
+              parent="menu_m4fr_root"
+              sequence="10"
+              groups="m4fr.group_m4fr_admin,m4fr.group_m4fr_direktur,m4fr.group_m4fr_manajer_keuangan"/>
 
-    <!-- UC-01 & UC-02: Pesanan → Admin (JB-04) + Direktur (JB-01) -->
-    <menuitem id="menu_m4fr_pesanan"
+    <menuitem id="menu_m4fr_sale_order"
               name="Pesanan"
-              parent="menu_m4fr_penjualan_root"
-              action="sale.action_quotations_with_onboarding"
-              groups="m4fr.group_admin,m4fr.group_direktur,m4fr.group_manajer_keuangan"
+              parent="menu_m4fr_penjualan"
+              action="sale.action_orders"
               sequence="10"/>
 
-    <!-- Pelanggan → Admin (JB-04) + Direktur (JB-01) -->
-    <menuitem id="menu_m4fr_pelanggan"
+    <menuitem id="menu_m4fr_client"
               name="Pelanggan"
-              parent="menu_m4fr_penjualan_root"
-              action="m4fr.action_m4fr_clients"
-              groups="m4fr.group_admin,m4fr.group_direktur"
+              parent="menu_m4fr_penjualan"
+              action="action_m4fr_custom_clients"
               sequence="20"/>
 
-    <!-- ── Root menu Produksi ─────────────────────────────────────────────── -->
-    <menuitem id="menu_m4fr_produksi_root"
+    <!-- Menu Produksi -->
+    <menuitem id="menu_m4fr_produksi"
               name="Produksi"
-              sequence="25"/>
+              parent="menu_m4fr_root"
+              sequence="20"
+              groups="m4fr.group_m4fr_admin,m4fr.group_m4fr_direktur,m4fr.group_m4fr_manajer_produksi,m4fr.group_m4fr_kepala_produksi"/>
 
-    <!-- UC-12: Daftar Pesanan Aktif → Manajer Produksi (JB-03) -->
-    <menuitem id="menu_active_orders_manajer_produksi"
+    <menuitem id="menu_m4fr_production_active"
               name="Daftar Pesanan Aktif"
-              parent="menu_m4fr_produksi_root"
+              parent="menu_m4fr_produksi"
               action="action_active_orders_manajer_produksi"
-              groups="m4fr.group_manajer_produksi"
+              groups="m4fr.group_m4fr_manajer_produksi,m4fr.group_m4fr_direktur"
               sequence="10"/>
 
-    <!-- UC-13: Update Status Produksi → Kepala Produksi (JB-05) -->
-    <menuitem id="menu_production_update_kepala_produksi"
-              name="Update Status Produksi"
-              parent="menu_m4fr_produksi_root"
-              action="action_production_update_kepala_produksi"
-              groups="m4fr.group_kepala_produksi"
+    <menuitem id="menu_m4fr_production_status"
+              name="Status Produksi"
+              parent="menu_m4fr_produksi"
+              action="action_production_status_update"
+              groups="m4fr.group_m4fr_kepala_produksi,m4fr.group_m4fr_admin,m4fr.group_m4fr_direktur"
               sequence="20"/>
-
 </odoo>

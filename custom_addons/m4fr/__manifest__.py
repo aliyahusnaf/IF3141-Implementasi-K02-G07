@@ -11,6 +11,8 @@
         'security/ir.model.access.csv',
         # Data
         'data/sequence.xml',
+        # Reports — D1
+        'reports/spk_report.xml',
         # Views — D1
         'views/client_views.xml',
         'views/sale_order_views.xml',

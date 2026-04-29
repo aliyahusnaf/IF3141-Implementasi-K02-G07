@@ -1,17 +1,13 @@
-from odoo import fields, models
-
+from odoo import api, fields, models
 
 class M4FRClient(models.Model):
-    _inherit = 'res.partner'
+    _name = 'm4fr.client'
+    _description = 'M4FR Pelanggan'
+    _inherit = ['mail.thread', 'mail.activity.mixin']
 
-    is_m4fr_client = fields.Boolean(string='Klien M4FR', default=False)
-
-    def action_view_orders(self):
-        self.ensure_one()
-        return {
-            'type': 'ir.actions.act_window',
-            'name': 'Riwayat Pesanan',
-            'res_model': 'sale.order',
-            'view_mode': 'tree,form',
-            'domain': [('partner_id', '=', self.id)],
-        }
+    name = fields.Char(string='Nama Pelanggan', required=True, tracking=True)
+    email = fields.Char(string='Email', tracking=True)
+    phone = fields.Char(string='No. Kontak', tracking=True)
+    address = fields.Text(string='Alamat', tracking=True)
+    city = fields.Char(string='Kota', tracking=True)
+    

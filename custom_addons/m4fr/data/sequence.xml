@@ -1,7 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
     <data noupdate="1">
-        <!-- Sequence SO sudah ada di modul sale bawaan Odoo (SO/YYYY/XXXXX).
-             File ini kosong dan siap dipakai domain lain untuk menambahkan sequence baru. -->
+        <!-- Sequence untuk Sales Order M4FR -->
+        <record id="seq_m4fr_sale_order" model="ir.sequence">
+            <field name="name">M4FR Sales Order</field>
+            <field name="code">m4fr.sale.order</field>
+            <field name="prefix">M4FR/SO/%(year)s/</field>
+            <field name="padding">4</field>
+            <field name="company_id" eval="False"/>
+        </record>
     </data>
 </odoo>

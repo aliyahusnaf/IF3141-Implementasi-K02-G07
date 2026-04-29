@@ -1,60 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-
-    <record id="view_m4fr_client_list" model="ir.ui.view">
-        <field name="name">m4fr.client.list</field>
-        <field name="model">res.partner</field>
+    <record id="view_m4fr_custom_client_tree" model="ir.ui.view">
+        <field name="name">m4fr.client.tree</field>
+        <field name="model">m4fr.client</field>
         <field name="arch" type="xml">
-            <tree>
-                <field name="name" string="Nama Klien"/>
+            <tree string="Pelanggan" editable="bottom">
+                <field name="name"/>
                 <field name="email"/>
                 <field name="phone"/>
-                <field name="street" string="Alamat"/>
-                <field name="city" string="Kota"/>
+                <field name="city"/>
             </tree>
         </field>
     </record>
 
-    <record id="view_m4fr_client_form" model="ir.ui.view">
+    <record id="view_m4fr_custom_client_form" model="ir.ui.view">
         <field name="name">m4fr.client.form</field>
-        <field name="model">res.partner</field>
+        <field name="model">m4fr.client</field>
         <field name="arch" type="xml">
-            <form>
+            <form string="Pelanggan">
                 <sheet>
-                    <div class="oe_button_box" name="button_box">
-                        <button name="action_view_orders"
-                                type="object"
-                                class="oe_stat_button"
-                                icon="fa-shopping-cart">
-                            <span class="o_stat_text">Pesanan</span>
-                        </button>
+                    <div class="oe_title">
+                        <label for="name"/>
+                        <h1><field name="name" placeholder="Contoh: Budi Santoso"/></h1>
                     </div>
                     <group>
-                        <group string="Informasi Klien">
-                            <field name="name" string="Nama"/>
-                            <field name="email"/>
-                            <field name="phone" string="No. Kontak"/>
+                        <group string="Kontak">
+                            <field name="email" widget="email"/>
+                            <field name="phone" widget="phone"/>
                         </group>
-                        <group string="Alamat">
-                            <field name="street" string="Alamat"/>
-                            <field name="city" string="Kota"/>
+                        <group string="Lokasi">
+                            <field name="address" placeholder="Alamat lengkap..."/>
+                            <field name="city"/>
                         </group>
                     </group>
                 </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="message_ids"/>
+                </div>
             </form>
         </field>
     </record>
 
-    <record id="action_m4fr_clients" model="ir.actions.act_window">
+    <record id="action_m4fr_custom_clients" model="ir.actions.act_window">
         <field name="name">Pelanggan</field>
-        <field name="res_model">res.partner</field>
+        <field name="res_model">m4fr.client</field>
         <field name="view_mode">tree,form</field>
-        <field name="domain">[('customer_rank', '>', 0)]</field>
-        <field name="view_ids" eval="[
-            (5, 0, 0),
-            (0, 0, {'view_mode': 'tree', 'view_id': ref('view_m4fr_client_list')}),
-            (0, 0, {'view_mode': 'form', 'view_id': ref('view_m4fr_client_form')}),
-        ]"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">Buat pelanggan pertama Anda!</p>
+        </field>
     </record>
-
 </odoo>
