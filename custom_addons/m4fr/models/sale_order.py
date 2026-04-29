@@ -46,6 +46,16 @@ class SaleOrderM4FR(models.Model):
         default='pending',
         tracking=True,
     )
+    order_line_items = fields.One2many(
+        'sale.order.line', 'order_id',
+        domain=[('is_adjustment', '=', False)],
+        string='Item Pesanan',
+    )
+    order_line_adjustments = fields.One2many(
+        'sale.order.line', 'order_id',
+        domain=[('is_adjustment', '=', True)],
+        string='Penyesuaian',
+    )
     order_status_ids = fields.One2many(
         'm4fr.order.status', 'order_id',
         string='Riwayat Status Produksi',

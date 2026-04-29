@@ -13,17 +13,22 @@
                 <field name="deadline_at" widget="datetime" required="1"/>
             </xpath>
 
-            <!-- Tambahkan kolom spesifikasi di inline tree order_line -->
-            <xpath expr="//field[@name='order_line']//tree//field[@name='name'][@widget='section_and_note_text']" position="after">
+            <!-- Ganti order_line di tab Order Lines ke order_line_items (domain di Python) -->
+            <xpath expr="//page[@name='order_lines']//field[@name='order_line']" position="attributes">
+                <attribute name="name">order_line_items</attribute>
+                <attribute name="context">{'default_is_adjustment': False}</attribute>
+            </xpath>
+
+            <!-- Tambahkan kolom spesifikasi di tree order_line_items -->
+            <xpath expr="//field[@name='order_line_items']//tree//field[@name='name'][@widget='section_and_note_text']" position="after">
                 <field name="specification" optional="show" string="Spesifikasi"/>
             </xpath>
 
-            <!-- Tab Penyesuaian: tampilkan order_line yang is_adjustment=True -->
+            <!-- Tab Penyesuaian: pakai order_line_adjustments (domain di Python) -->
             <xpath expr="//page[@name='order_lines']" position="after">
                 <page string="Penyesuaian" name="order_adjustment">
-                    <field name="order_line"
-                           context="{'default_is_adjustment': True}"
-                           domain="[('is_adjustment', '=', True)]">
+                    <field name="order_line_adjustments"
+                           context="{'default_is_adjustment': True}">
                         <tree editable="bottom">
                             <field name="is_adjustment" column_invisible="1"/>
                             <field name="product_id" string="Produk/Jenis" optional="show"/>

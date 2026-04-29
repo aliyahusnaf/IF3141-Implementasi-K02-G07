@@ -73,7 +73,7 @@
         <field name="name">Daftar Pesanan Aktif</field>
         <field name="res_model">sale.order</field>
         <field name="view_mode">tree,form</field>
-        <field name="domain">[('state', 'in', ('sale', 'done'))]</field>
+        <field name="domain">[('state', '=', 'sale'), ('production_status', '!=', 'done')]</field>
         <field name="context">{'search_default_filter_to_invoice': 0}</field>
         <field name="view_ids" eval="[
             (5, 0, 0),
@@ -168,7 +168,7 @@
         <field name="name">Status Produksi</field>
         <field name="res_model">sale.order</field>
         <field name="view_mode">tree,form</field>
-        <field name="domain">[('state', 'in', ('sale', 'done'))]</field>
+        <field name="domain">[('state', '=', 'sale')]</field>
         <field name="view_ids" eval="[
             (5, 0, 0),
             (0, 0, {'view_mode': 'tree', 'view_id': ref('view_production_update_tree')}),

@@ -25,7 +25,6 @@ class UpdateProductionStatusWizard(models.TransientModel):
         required=True,
         compute='_compute_new_status',
         readonly=False,
-        store=True,
     )
     note = fields.Text(string='Catatan (opsional)')
 
