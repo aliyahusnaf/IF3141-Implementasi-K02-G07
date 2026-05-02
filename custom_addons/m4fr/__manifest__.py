@@ -11,6 +11,7 @@
         'security/ir.model.access.csv',
         # Data
         'data/sequence.xml',
+        'data/auth_timeout.xml',
         # Reports — D1
         'reports/spk_report.xml',
         # Views — D1
@@ -29,10 +30,15 @@
         # Views — D4 (tambahkan saat D4 siap)
         # 'views/cash_flow_views.xml',
         # 'views/tax_report_views.xml',
-        # Views — D5 (tambahkan saat D5 siap)
+        # Views — D5
+        'views/user_management_views.xml',
         # 'views/dashboard_views.xml',
-        # 'views/user_management_views.xml',
     ],
+    'assets': {
+        'web.assets_backend': [
+            'm4fr/static/src/js/idle_timeout.js',
+        ],
+    },
     'installable': True,
     'application': True,
     'license': 'LGPL-3',

@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- Inherit list view res.users: tambah kolom Role dan Last Login -->
+    <record id="view_m4fr_users_tree" model="ir.ui.view">
+        <field name="name">res.users.tree.m4fr</field>
+        <field name="model">res.users</field>
+        <field name="inherit_id" ref="base.view_users_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='login']" position="after">
+                <field name="role" optional="show"/>
+                <field name="login_date" string="Login Terakhir" optional="show"/>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Inherit form view res.users: tambah field Role di tab Access Rights -->
+    <record id="view_m4fr_users_form" model="ir.ui.view">
+        <field name="name">res.users.form.m4fr</field>
+        <field name="model">res.users</field>
+        <field name="inherit_id" ref="base.view_users_form"/>
+        <field name="arch" type="xml">
+            <xpath expr="//page[@name='access_rights']" position="before">
+                <page name="m4fr_role" string="Peran M4FR">
+                    <group>
+                        <field name="role" widget="radio"/>
+                    </group>
+                </page>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- Action: buka daftar pengguna internal, pin ke view yang benar -->
+    <record id="action_m4fr_user_management" model="ir.actions.act_window">
+        <field name="name">Pengguna</field>
+        <field name="res_model">res.users</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('share', '=', False)]</field>
+        <field name="view_ids" eval="[
+            (5, 0, 0),
+            (0, 0, {'view_mode': 'tree', 'view_id': ref('base.view_users_tree')}),
+            (0, 0, {'view_mode': 'form', 'view_id': ref('base.view_users_form')}),
+        ]"/>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Buat pengguna baru dan tetapkan perannya.
+            </p>
+        </field>
+    </record>
+
+    <!-- Menu Pengaturan — hanya JB-01 -->
+    <menuitem id="menu_m4fr_pengaturan"
+              name="Pengaturan"
+              parent="menu_m4fr_root"
+              sequence="90"
+              groups="m4fr.group_m4fr_direktur"/>
+
+    <menuitem id="menu_m4fr_pengguna"
+              name="Pengguna"
+              parent="menu_m4fr_pengaturan"
+              action="action_m4fr_user_management"
+              sequence="10"
+              groups="m4fr.group_m4fr_direktur"/>
+</odoo>

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
-    <data noupdate="1">
+    <data noupdate="0">
         <record id="module_category_m4fr" model="ir.module.category">
             <field name="name">M4FR Management</field>
             <field name="description">Kategori akses untuk modul M4FR</field>
@@ -32,7 +32,7 @@
             <field name="category_id" ref="module_category_m4fr"/>
         </record>
 
-        <!-- JB-01: Direktur — implies semua grup + sales_team -->
+        <!-- JB-01: Direktur — implies semua grup + sales_team + erp_manager untuk kelola user -->
         <record id="group_m4fr_direktur" model="res.groups">
             <field name="name">M4FR: Direktur (JB-01)</field>
             <field name="category_id" ref="module_category_m4fr"/>
@@ -42,6 +42,7 @@
                 (4, ref('group_m4fr_admin')),
                 (4, ref('group_m4fr_kepala_produksi')),
                 (4, ref('sales_team.group_sale_manager')),
+                (4, ref('base.group_erp_manager')),
             ]"/>
         </record>
     </data>
