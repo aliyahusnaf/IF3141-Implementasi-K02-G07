@@ -1,0 +1,21 @@
+.m4fr-dashboard {
+    position: absolute;
+    inset: 0;
+    overflow-y: auto;
+    background-color: #f4f5f7;
+
+    .chart-container {
+        position: relative;
+        height: 220px;
+    }
+
+    .chart-container-pie {
+        position: relative;
+        height: 460px;
+    }
+
+    .kpi-card-pendapatan { border-left: 4px solid #28a745; }
+    .kpi-card-pengeluaran { border-left: 4px solid #dc3545; }
+    .kpi-card-laba       { border-left: 4px solid #007bff; }
+    .kpi-card-pesanan    { border-left: 4px solid #17a2b8; }
+}

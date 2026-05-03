@@ -32,11 +32,14 @@
         # 'views/tax_report_views.xml',
         # Views — D5
         'views/user_management_views.xml',
-        # 'views/dashboard_views.xml',
+        'views/dashboard_views.xml',
     ],
     'assets': {
         'web.assets_backend': [
             'm4fr/static/src/js/idle_timeout.js',
+            'm4fr/static/src/js/dashboard.js',
+            'm4fr/static/src/xml/dashboard.xml',
+            'm4fr/static/src/scss/dashboard.scss',
         ],
     },
     'installable': True,

@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<templates xml:space="preserve">
+    <t t-name="m4fr.Dashboard" owl="1">
+        <div class="m4fr-dashboard">
+
+            <!-- Header -->
+            <div class="d-flex justify-content-between align-items-center px-4 py-3 bg-white border-bottom shadow-sm">
+                <h4 class="mb-0 fw-bold">
+                    <i class="fa fa-bar-chart me-2 text-primary"/>
+                    Dashboard Keuangan
+                </h4>
+                <select class="form-select w-auto" t-on-change="onPeriodChange">
+                    <option value="this_month">Bulan Ini</option>
+                    <option value="last_month">Bulan Lalu</option>
+                    <option value="this_quarter">Kuartal Ini</option>
+                    <option value="this_year">Tahun Ini</option>
+                </select>
+            </div>
+
+            <!-- Loading -->
+            <div t-if="state.loading"
+                 class="d-flex justify-content-center align-items-center"
+                 style="height:300px">
+                <i class="fa fa-spinner fa-spin fa-3x text-muted"/>
+            </div>
+
+            <div t-else="" class="p-3">
+
+                <!-- 4 KPI Cards -->
+                <div class="row g-3 mb-3">
+                    <div class="col-md-3">
+                        <div class="card border-0 shadow-sm kpi-card-pendapatan">
+                            <div class="card-body py-3">
+                                <div class="text-muted small mb-1">Total Pendapatan</div>
+                                <div class="fw-bold fs-5 text-success"
+                                     t-esc="formatCurrency(state.kpi.total_pendapatan)"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card border-0 shadow-sm kpi-card-pengeluaran">
+                            <div class="card-body py-3">
+                                <div class="text-muted small mb-1">Total Pengeluaran</div>
+                                <div class="fw-bold fs-5 text-danger"
+                                     t-esc="formatCurrency(state.kpi.total_pengeluaran)"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card border-0 shadow-sm kpi-card-laba">
+                            <div class="card-body py-3">
+                                <div class="text-muted small mb-1">Laba Bersih</div>
+                                <div class="fw-bold fs-5 text-primary"
+                                     t-esc="formatCurrency(state.kpi.laba_bersih)"/>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card border-0 shadow-sm kpi-card-pesanan">
+                            <div class="card-body py-3">
+                                <div class="text-muted small mb-1">Pesanan Selesai</div>
+                                <div class="fw-bold fs-5 text-info"
+                                     t-esc="state.kpi.pesanan_selesai"/>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2 Kolom Charts -->
+                <div class="row g-3">
+
+                    <!-- Kiri: bar + line stacked -->
+                    <div class="col-md-8 d-flex flex-column gap-3">
+                        <div class="card border-0 shadow-sm">
+                            <div class="card-body">
+                                <h6 class="text-muted mb-2">Pendapatan vs Pengeluaran per Bulan</h6>
+                                <div class="chart-container">
+                                    <canvas t-ref="revenueChart"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card border-0 shadow-sm">
+                            <div class="card-body">
+                                <h6 class="text-muted mb-2">Tren Laba Bersih</h6>
+                                <div class="chart-container">
+                                    <canvas t-ref="profitChart"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Kanan: pie -->
+                    <div class="col-md-4">
+                        <div class="card border-0 shadow-sm h-100">
+                            <div class="card-body">
+                                <h6 class="text-muted mb-2">Komposisi Pengeluaran</h6>
+                                <div class="chart-container-pie">
+                                    <canvas t-ref="expenseChart"/>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </t>
+</templates>
