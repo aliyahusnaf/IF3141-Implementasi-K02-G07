@@ -68,6 +68,23 @@ class SaleOrderM4FR(models.Model):
     is_production_done = fields.Boolean(
         compute='_compute_next_production_status',
     )
+    status_display = fields.Char(
+        string='Status',
+        compute='_compute_status_display',
+    )
+
+    @api.depends('state', 'production_status')
+    def _compute_status_display(self):
+        sale_state_labels = {
+            'draft': 'Quotation',
+            'sent': 'Quotation Sent',
+            'cancel': 'Dibatalkan',
+        }
+        for rec in self:
+            if rec.state in ('sale', 'done'):
+                rec.status_display = PRODUCTION_STATUS_LABEL.get(rec.production_status, '')
+            else:
+                rec.status_display = sale_state_labels.get(rec.state, rec.state)
 
     @api.depends('production_status')
     def _compute_next_production_status(self):

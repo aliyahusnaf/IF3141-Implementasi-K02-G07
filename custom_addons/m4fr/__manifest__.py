@@ -1,6 +1,6 @@
 {
     'name': 'M4FR - Sistem Informasi Keuangan Terintegrasi dan Perpajakan',
-    'version': '17.0.1.0.0',
+    'version': '17.0.1.0.1',
     'category': 'Sales/Sales',
     'summary': 'Sistem Informasi Keuangan Terintegrasi untuk M4FR by Ataya',
     'author': 'Kelompok 07 - K02',
@@ -11,6 +11,7 @@
         'security/ir.model.access.csv',
         # Data
         'data/sequence.xml',
+        'data/company_currency.xml',
         # Reports — D1
         'reports/spk_report.xml',
         # Views — D1
