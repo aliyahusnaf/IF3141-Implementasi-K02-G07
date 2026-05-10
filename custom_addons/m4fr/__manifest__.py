@@ -14,6 +14,8 @@
         'data/company_currency.xml',
         # Reports — D1
         'reports/spk_report.xml',
+        # Reports — D4
+        'reports/tax_report_template.xml',
         # Views — D1
         'views/client_views.xml',
         'views/sale_order_views.xml',
