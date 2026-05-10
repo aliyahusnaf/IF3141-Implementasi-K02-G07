@@ -28,8 +28,8 @@
         # 'views/raw_material_views.xml',
         # 'views/vendor_bill_views.xml',
         # Views — D4 (tambahkan saat D4 siap)
-        # 'views/cash_flow_views.xml',
-        # 'views/tax_report_views.xml',
+        'views/cash_flow_views.xml',
+        'views/tax_report_views.xml',
         # Views — D5 (tambahkan saat D5 siap)
         # 'views/dashboard_views.xml',
         # 'views/user_management_views.xml',

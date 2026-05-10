@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="view_m4fr_tax_controller_form" model="ir.ui.view">
+        <field name="name">m4fr.tax.controller.form</field>
+        <field name="model">m4fr.tax.controller</field>
+        <field name="arch" type="xml">
+            <form string="Laporan Laba Rugi &amp; Pajak" create="false">
+                <sheet>
+                    <div class="oe_title">
+                        <h1>Kalkulasi Keuangan &amp; Pajak UMKM</h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="period_start"/>
+                            <field name="period_end"/>
+                        </group>
+                    </group>
+                    <group string="Key Performance Indicators (KPI)">
+                        <group>
+                            <field name="gross_omzet" widget="monetary" decoration-success="1" style="font-size: 18px; font-weight: bold;"/>
+                            <field name="operational_expense" widget="monetary" decoration-danger="1" style="font-size: 18px; font-weight: bold;"/>
+                        </group>
+                        <group>
+                            <field name="net_profit" widget="monetary" decoration-info="1" style="font-size: 18px; font-weight: bold;"/>
+                            <field name="estimated_tax" widget="monetary" decoration-warning="1" style="font-size: 18px; font-weight: bold;"/>
+                        </group>
+                    </group>
+                    <footer>
+                        <button name="action_print_report" string="Ekspor PDF" type="object" class="btn-primary"/>
+                        <button string="Tutup" class="btn-secondary" special="cancel"/>
+                    </footer>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_m4fr_tax_controller" model="ir.actions.act_window">
+        <field name="name">Laporan Laba/Rugi</field>
+        <field name="res_model">m4fr.tax.controller</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+
+    <menuitem id="menu_m4fr_tax_report" name="Laporan Laba/Rugi" parent="menu_m4fr_accounting_root" action="action_m4fr_tax_controller" sequence="20"/>
+</odoo>
