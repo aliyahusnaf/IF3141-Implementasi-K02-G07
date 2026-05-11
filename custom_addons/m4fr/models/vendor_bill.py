@@ -1,65 +1,49 @@
 from odoo import models, fields, api
 
-class Vendor(models.Model):
-    _name = 'm4fr.vendor'
-    _description = 'Master Data Vendor'
-
-    name = fields.Char(string='Nama Vendor', required=True)
-    contact_name = fields.Char(string='Contact Person')
-    phone = fields.Char(string='Nomor Telepon')
-    email = fields.Char(string='Email')
-    address = fields.Text(string='Alamat')
-
 class VendorBill(models.Model):
     _name = 'm4fr.vendor.bill'
     _description = 'Tagihan Vendor'
-    _inherit = ['mail.thread', 'mail.activity.mixin'] # Optional: for chatter
 
-    name = fields.Char(string='Nomor Tagihan', required=True, copy=False, readonly=True, default='New')
+    vendor_bill_id = fields.Char(string='ID Bill', required=True, copy=False, default='New')
     vendor_id = fields.Many2one('m4fr.vendor', string='Vendor', required=True)
-    date_bill = fields.Date(string='Tanggal Tagihan', default=fields.Date.context_today)
-    
-    bill_item_ids = fields.One2many('m4fr.vendor.bill.item', 'bill_id', string='Item Pembelian')
-    
-    grand_total = fields.Float(string='Grand Total', compute='_compute_grand_total', store=True)
-    
-    state = fields.Selection([
+    bill_date = fields.Date(string='Tanggal Tagihan', default=fields.Date.today)
+    bill_type = fields.Selection([('standard', 'Standar'), ('urgent', 'Urgent')], default='standard')
+    payment_status = fields.Selection([
         ('draft', 'Draft'),
         ('confirmed', 'Confirmed'),
         ('paid', 'Paid')
-    ], string='Status', default='draft', tracking=True)
+    ], string='Status Pembayaran', default='draft')
 
-    @api.depends('bill_item_ids.subtotal')
+    bill_item_ids = fields.One2many('m4fr.vendor.bill.item', 'vendor_bill_id')
+    adjustment_ids = fields.One2many('m4fr.vendor.adjustment', 'vendor_bill_id')
+    grand_total = fields.Float(string='Grand Total', compute='_compute_grand_total', store=True)
+
+    @api.depends('bill_item_ids.subtotal', 'adjustment_ids.amount')
     def _compute_grand_total(self):
         for bill in self:
-            bill.grand_total = sum(item.subtotal for item in bill.bill_item_ids)
+            subtotal_raw = sum(item.subtotal for item in bill.bill_item_ids)
+            adjustments = sum(adj.amount for adj in bill.adjustment_ids)
+            # Logic: 1.11 * Σ(items) + Σ(adjustments)
+            bill.grand_total = (1.11 * subtotal_raw) + adjustments
 
-    def action_confirm(self):
-        for rec in self:
-            if rec.name == 'New':
-                rec.name = self.env['ir.sequence'].next_by_code('m4fr.vendor.bill') or 'BILL/' + str(fields.Date.today())
-            rec.state = 'confirmed'
+    def validateBill(self):
+        self.payment_status = 'confirmed'
 
-    def action_pay(self):
+    def processPayment(self):
         for rec in self:
-            # Logic for FR-04: Increase stock when paid
             for item in rec.bill_item_ids:
-                item.material_id.stock += item.quantity
-            
-            # TODO: Call D4.createJournalEntry here in the next step
-            rec.state = 'paid'
+                # Trigger Stock IN
+                self.env['m4fr.material.movement'].create({
+                    'raw_material_id': item.raw_material_id.id,
+                    'vendor_bill_item_id': item.id,
+                    'quantity': item.quantity,
+                    'type': 'IN',
+                    'note': f'Auto-IN from {rec.vendor_bill_id}'
+                })
+            rec.payment_status = 'paid'
+            rec.triggerCashFlowOUT()
 
-class VendorBillItem(models.Model):
-    _name = 'm4fr.vendor.bill.item'
-    _description = 'Item Tagihan Vendor'
-
-    bill_id = fields.Many2one('m4fr.vendor.bill', string='Bill Reference', ondelete='cascade')
-    material_id = fields.Many2one('m4fr.raw.material', string='Bahan Baku', required=True)
-    quantity = fields.Float(string='Jumlah', default=1.0)
-    unit_price = fields.Float(string='Harga Satuan')
-    subtotal = fields.Float(string='Subtotal', compute='_compute_subtotal', store=True)
-
-    @api.depends('quantity', 'unit_price')
-    def _compute_subtotal(self):
-        for item in self:
-            item.subtotal = item.quantity * item.unit_price
+    def triggerCashFlowOUT(self):
+        # Wiring to D4
+        # self.env['m4fr.cash.flow'].createJournalEntry(self.grand_total, 'OUT', 'PEMBELIAN_BAHAN_BAKU', self.vendor_bill_id)
+        pass

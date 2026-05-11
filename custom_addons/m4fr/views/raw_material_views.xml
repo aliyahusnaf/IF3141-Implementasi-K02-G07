@@ -17,6 +17,18 @@
         <field name="arch" type="xml">
             <form>
                 <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="%(m4fr.action_m4fr_material_movement)d" 
+                                type="action" 
+                                class="oe_stat_button" 
+                                icon="fa-exchange"
+                                context="{'search_default_material_id': active_id, 'default_material_id': active_id}">
+                            <div class="o_stat_info">
+                                <span class="o_stat_text">History Mutasi</span>
+                            </div>
+                        </button>
+                    </div>
+                    
                     <group>
                         <group>
                             <field name="name"/>
