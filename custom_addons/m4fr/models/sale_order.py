@@ -69,7 +69,7 @@ class SaleOrderM4FR(models.Model):
         compute='_compute_next_production_status',
     )
     status_display = fields.Char(
-        string='Status',
+        string='Status Produksi',
         compute='_compute_status_display',
     )
 
@@ -139,3 +139,26 @@ class SaleOrderM4FR(models.Model):
             'target': 'new',
             'context': {'default_order_id': self.id},
         }
+
+    def action_create_invoice(self):
+        self.ensure_one()
+        invoice = self.env['m4fr.invoice'].search([
+            ('order_id', '=', self.id),
+        ], limit=1)
+
+        if not invoice:
+            invoice = self.env['m4fr.invoice'].create({
+                'order_id': self.id,
+                'total_snapshot': self.amount_total,
+                'demand_type': 'percent',
+                'demand_value': 50.0,
+                'due_date': fields.Date.to_date(self.deadline_at) if self.deadline_at else fields.Date.context_today(self),
+            })
+
+        action = self.env.ref('m4fr.action_m4fr_invoice').read()[0]
+        action.update({
+            'res_id': invoice.id,
+            'views': [(self.env.ref('m4fr.view_m4fr_invoice_form').id, 'form')],
+            'target': 'current',
+        })
+        return action

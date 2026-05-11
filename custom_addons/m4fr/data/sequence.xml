@@ -9,5 +9,13 @@
             <field name="padding">4</field>
             <field name="company_id" eval="False"/>
         </record>
+
+        <record id="seq_m4fr_invoice" model="ir.sequence">
+            <field name="name">M4FR Invoice</field>
+            <field name="code">m4fr.invoice</field>
+            <field name="prefix">M4FR/INV/%(year)s/</field>
+            <field name="padding">4</field>
+            <field name="company_id" eval="False"/>
+        </record>
     </data>
 </odoo>

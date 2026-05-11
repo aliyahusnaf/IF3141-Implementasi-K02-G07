@@ -16,6 +16,7 @@
         'reports/spk_report.xml',
         # Reports — D4
         'reports/tax_report_template.xml',
+        'reports/invoice_reports.xml',
         # Views — D1
         'views/client_views.xml',
         'views/sale_order_views.xml',
@@ -24,8 +25,8 @@
         # Wizards — D1
         'wizards/update_production_status_wizard_views.xml',
         # Views — D2 (tambahkan saat D2 siap)
-        # 'views/invoice_views.xml',
-        # 'views/payment_wizard_views.xml',
+        'views/invoice_views.xml',
+        'views/payment_wizard_views.xml',
         # Views — D3 (tambahkan saat D3 siap)
         # 'views/raw_material_views.xml',
         # 'views/vendor_bill_views.xml',

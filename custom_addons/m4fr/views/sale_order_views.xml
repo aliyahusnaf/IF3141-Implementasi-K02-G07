@@ -8,6 +8,22 @@
         <field name="inherit_id" ref="sale.view_order_form"/>
         <field name="arch" type="xml">
 
+            <!-- Sembunyikan tombol invoice bawaan Odoo supaya alur hanya lewat tombol custom -->
+            <xpath expr="//button[@id='create_invoice']" position="replace"/>
+            <xpath expr="//button[@id='create_invoice_percentage']" position="replace"/>
+            <xpath expr="//button[@name='action_view_invoice']" position="replace"/>
+
+            <!-- Tambahkan tombol utama untuk tagihan custom M4FR -->
+            <xpath expr="//header" position="inside">
+                <field name="invoice_count" invisible="1"/>
+                <button name="action_create_invoice"
+                        string="Buat Tagihan"
+                        type="object"
+                        class="btn-primary"
+                        groups="m4fr.group_m4fr_admin,m4fr.group_m4fr_direktur,m4fr.group_m4fr_manajer_keuangan"
+                        invisible="state not in ('sale', 'done')"/>
+            </xpath>
+
             <!-- Tambahkan deadline_at di grup order_details (atas form) -->
             <xpath expr="//group[@name='order_details']/field[@name='payment_term_id']" position="after">
                 <field name="deadline_at" widget="datetime" required="1"/>
@@ -127,3 +143,6 @@
     </record>
 
 </odoo>
+
+
+
