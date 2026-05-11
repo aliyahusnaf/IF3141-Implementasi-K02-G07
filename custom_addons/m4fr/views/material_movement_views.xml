@@ -1,15 +1,17 @@
-<?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <menuitem id="menu_m4fr_inventory_root" name="Inventaris" sequence="20" 
+              groups="m4fr.group_m4fr_admin,m4fr.group_m4fr_kepala_produksi,m4fr.group_m4fr_direktur"/>
+
     <record id="view_m4fr_material_movement_tree" model="ir.ui.view">
         <field name="name">m4fr.material.movement.tree</field>
         <field name="model">m4fr.material.movement</field>
         <field name="arch" type="xml">
             <tree create="true">
-                <field name="date"/>
-                <field name="material_id"/>
-                <field name="type" widget="badge" decoration-success="type == 'in'" decoration-danger="type == 'out'"/>
+                <field name="movement_date"/>
+                <field name="raw_material_id"/>
+                <field name="type" widget="badge" decoration-success="type == 'IN'" decoration-danger="type == 'OUT'"/>
                 <field name="quantity"/>
-                <field name="description"/>
+                <field name="note"/>
             </tree>
         </field>
     </record>
@@ -20,9 +22,6 @@
         <field name="view_mode">tree,form</field>
     </record>
 
-    <menuitem id="menu_m4fr_material_movement" 
-              name="Mutasi Stok" 
-              parent="menu_m4fr_inventory_root" 
-              action="action_m4fr_material_movement" 
-              sequence="15"/>
+    <menuitem id="menu_m4fr_material_movement" name="Mutasi Stok" parent="menu_m4fr_inventory_root" 
+              action="action_m4fr_material_movement" sequence="15"/>
 </odoo>

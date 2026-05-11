@@ -4,9 +4,11 @@
         <field name="model">m4fr.raw.material</field>
         <field name="arch" type="xml">
             <tree decoration-danger="stock &lt; 5">
+                <field name="raw_material_id"/>
                 <field name="name"/>
+                <field name="unit_name"/>
+                <field name="standard_unit_price"/>
                 <field name="stock"/>
-                <field name="unit"/>
             </tree>
         </field>
     </record>
@@ -19,23 +21,22 @@
                 <sheet>
                     <div class="oe_button_box" name="button_box">
                         <button name="%(m4fr.action_m4fr_material_movement)d" 
-                                type="action" 
-                                class="oe_stat_button" 
-                                icon="fa-exchange"
-                                context="{'search_default_material_id': active_id, 'default_material_id': active_id}">
+                                type="action" class="oe_stat_button" icon="fa-exchange"
+                                context="{'search_default_raw_material_id': active_id}">
                             <div class="o_stat_info">
-                                <span class="o_stat_text">History Mutasi</span>
+                                <span class="o_stat_text">Riwayat Mutasi</span>
                             </div>
                         </button>
                     </div>
-                    
                     <group>
                         <group>
+                            <field name="raw_material_id"/>
                             <field name="name"/>
-                            <field name="unit"/>
+                            <field name="unit_name"/>
                         </group>
                         <group>
-                            <field name="stock"/>
+                            <field name="standard_unit_price"/>
+                            <field name="stock" readonly="1"/>
                         </group>
                     </group>
                 </sheet>
@@ -43,30 +44,13 @@
         </field>
     </record>
 
-    <record id="view_m4fr_raw_material_search" model="ir.ui.view">
-        <field name="name">m4fr.raw.material.search</field>
-        <field name="model">m4fr.raw.material</field>
-        <field name="arch" type="xml">
-            <search>
-                <field name="name"/>
-                <filter string="Stok Kosong" name="no_stock" domain="[('stock', '=', 0)]"/>
-                <group expand="0" string="Group By">
-                    <filter string="Satuan" name="group_by_unit" context="{'group_by': 'unit'}"/>
-                </group>
-            </search>
-        </field>
-    </record>
-
     <record id="action_m4fr_raw_material" model="ir.actions.act_window">
-        <field name="name">Bahan Baku</field>
+        <field name="name">Stok Bahan</field>
         <field name="res_model">m4fr.raw.material</field>
         <field name="view_mode">tree,form</field>
-        <field name="search_view_id" ref="view_m4fr_raw_material_search"/>
     </record>
 
-    <menuitem id="menu_m4fr_inventory_root" name="Inventaris" sequence="20" 
-              groups="m4fr.group_m4fr_admin,m4fr.group_m4fr_kepala_produksi,m4fr.group_m4fr_direktur"/>
-    
-    <menuitem id="menu_m4fr_raw_material" name="Stok Bahan" parent="menu_m4fr_inventory_root" 
+    <menuitem id="menu_m4fr_raw_material" name="Stok Bahan" 
+              parent="menu_m4fr_inventory_root" 
               action="action_m4fr_raw_material" sequence="10"/>
 </odoo>
