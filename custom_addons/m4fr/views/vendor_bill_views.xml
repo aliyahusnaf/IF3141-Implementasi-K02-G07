@@ -1,0 +1,63 @@
+<odoo>
+    <record id="view_m4fr_vendor_bill_tree" model="ir.ui.view">
+        <field name="name">m4fr.vendor.bill.tree</field>
+        <field name="model">m4fr.vendor.bill</field>
+        <field name="arch" type="xml">
+            <tree decoration-info="state == 'draft'" decoration-success="state == 'paid'">
+                <field name="name"/> <field name="vendor_id"/>
+                <field name="date_bill"/>
+                <field name="grand_total" sum="Total Keseluruhan"/>
+                <field name="state" widget="badge" decoration-info="state == 'draft'" decoration-success="state == 'paid'"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_m4fr_vendor_bill_form" model="ir.ui.view">
+        <field name="name">m4fr.vendor.bill.form</field>
+        <field name="model">m4fr.vendor.bill</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_confirm" string="Konfirmasi" type="object" class="oe_highlight" invisible="state != 'draft'"/>
+                    <button name="action_pay" string="Bayar" type="object" class="oe_highlight" invisible="state != 'confirmed'"/>
+                    <field name="state" widget="statusbar" statusbar_visible="draft,confirmed,paid"/>
+                </header>
+                <sheet>
+                    <div class="oe_title">
+                        <h1><field name="name" readonly="1"/></h1>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="vendor_id" options="{'no_create': True}"/>
+                            <field name="date_bill"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Item Pembelian" name="items">
+                            <field name="bill_item_ids">
+                                <tree editable="bottom">
+                                    <field name="material_id"/>
+                                    <field name="quantity"/>
+                                    <field name="unit_price"/>
+                                    <field name="subtotal" readonly="1"/>
+                                </tree>
+                            </field>
+                            <group class="oe_subtotal_footer oe_right">
+                                <field name="grand_total" class="oe_subtotal_footer_separator"/>
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_m4fr_vendor_bill" model="ir.actions.act_window">
+        <field name="name">Tagihan Vendor</field>
+        <field name="res_model">m4fr.vendor.bill</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="menu_m4fr_vendor_bill" name="Tagihan Vendor" parent="menu_m4fr_inventory_root" 
+              action="action_m4fr_vendor_bill" sequence="20"/>
+</odoo>
