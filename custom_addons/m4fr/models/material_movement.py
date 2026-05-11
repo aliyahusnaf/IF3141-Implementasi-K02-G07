@@ -16,6 +16,12 @@ class MaterialMovement(models.Model):
     note = fields.Char(string='Catatan')
 
     @api.model
+    def create(self, vals):
+        if vals.get('movement_id', 'New') == 'New':
+            vals['movement_id'] = self.env['ir.sequence'].next_by_code('m4fr.material.movement') or 'New'
+        return super(MaterialMovement, self).create(vals)
+    
+    @api.model
     def recordMovement(self, mat_id, qty, m_type):
         return self.create({
             'raw_material_id': mat_id,

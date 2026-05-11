@@ -17,6 +17,12 @@ class RawMaterial(models.Model):
     stock = fields.Float(string='Stok', compute='_compute_stock', store=True)
     movement_ids = fields.One2many('m4fr.material.movement', 'raw_material_id')
 
+    @api.model
+    def create(self, vals):
+        if vals.get('raw_material_id', 'New') == 'New':
+            vals['raw_material_id'] = self.env['ir.sequence'].next_by_code('m4fr.raw.material') or 'New'
+        return super(RawMaterial, self).create(vals)
+
     @api.depends('movement_ids.quantity', 'movement_ids.type')
     def _compute_stock(self):
         for rec in self:

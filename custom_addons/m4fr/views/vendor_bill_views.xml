@@ -26,10 +26,9 @@
         <field name="arch" type="xml">
             <form>
                 <header>
-                    <button name="validateBill" string="Konfirmasi" type="object" 
-                            class="oe_highlight" invisible="payment_status != 'draft'"/>
-                    <button name="processPayment" string="Bayar &amp; Terima Barang" type="object" 
-                            class="oe_highlight" invisible="payment_status != 'confirmed'"/>
+                    <button name="validateBill" string="Konfirmasi" type="object" class="oe_highlight" invisible="payment_status != 'draft'"/>
+                    <button name="processPayment" string="Bayar" type="object" class="oe_highlight" invisible="payment_status != 'confirmed'"/>
+                    <button name="button_confirm_receipt" string="Konfirmasi Penerimaan" type="object" class="oe_highlight" invisible="payment_status != 'paid'"/>
                     <field name="payment_status" widget="statusbar" statusbar_visible="draft,confirmed,paid"/>
                 </header>
                 <sheet>
