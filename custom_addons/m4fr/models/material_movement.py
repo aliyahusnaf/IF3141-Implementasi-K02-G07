@@ -11,7 +11,7 @@ class MaterialMovement(models.Model):
     order_id = fields.Many2one('sale.order', string='Pesanan', ondelete='set null')
     
     quantity = fields.Float(string='Jumlah', required=True)
-    type = fields.Selection([('IN', 'IN'), ('OUT', 'OUT'), ('ADJ', 'ADJ')], string='Tipe', required=True)
+    type = fields.Selection([('IN', 'IN'), ('OUT', 'OUT'), ('ADJUSTMENT', 'ADJUSTMENT')], string='Tipe', required=True)
     movement_date = fields.Datetime(string='Tanggal Mutasi', default=fields.Datetime.now)
     note = fields.Char(string='Catatan')
 
@@ -31,5 +31,7 @@ class MaterialMovement(models.Model):
     @api.constrains('quantity', 'type', 'raw_material_id')
     def _check_qty_out(self):
         for rec in self:
-            if rec.type == 'OUT' and rec.quantity > rec.raw_material_id.stock + rec.quantity:
-                raise ValidationError("Jumlah keluar melebihi stok yang tersedia!")
+            if rec.type == 'OUT':
+                available = rec.raw_material_id.stock + (rec._origin.quantity if rec.id else 0)
+                if rec.quantity > available:
+                    raise ValidationError(f"Jumlah keluar ({rec.quantity}) melebihi stok tersedia ({available})!")

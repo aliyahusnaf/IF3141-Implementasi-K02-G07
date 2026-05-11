@@ -18,6 +18,12 @@ class VendorBill(models.Model):
     adjustment_ids = fields.One2many('m4fr.vendor.adjustment', 'vendor_bill_id')
     grand_total = fields.Float(string='Grand Total', compute='_compute_grand_total', store=True)
 
+    @api.model
+    def create(self, vals):
+        if vals.get('vendor_bill_id', 'New') == 'New':
+            vals['vendor_bill_id'] = self.env['ir.sequence'].next_by_code('m4fr.vendor.bill') or 'New'
+        return super(VendorBill, self).create(vals)
+        
     @api.depends('bill_item_ids.subtotal', 'adjustment_ids.amount')
     def _compute_grand_total(self):
         for bill in self:

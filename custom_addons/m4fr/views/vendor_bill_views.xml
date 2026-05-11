@@ -1,37 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
 <odoo>
+    <record id="view_m4fr_vendor_bill_tree" model="ir.ui.view">
+        <field name="name">m4fr.vendor.bill.tree</field>
+        <field name="model">m4fr.vendor.bill</field>
+        <field name="arch" type="xml">
+            <tree decoration-info="payment_status == 'draft'" 
+                  decoration-warning="payment_status == 'confirmed'" 
+                  decoration-success="payment_status == 'paid'">
+                <field name="vendor_bill_id"/>
+                <field name="vendor_id"/>
+                <field name="bill_date"/>
+                <field name="bill_type"/>
+                <field name="grand_total" sum="Total Keseluruhan"/>
+                <field name="payment_status" widget="badge" 
+                       decoration-info="payment_status == 'draft'" 
+                       decoration-warning="payment_status == 'confirmed'" 
+                       decoration-success="payment_status == 'paid'"/>
+            </tree>
+        </field>
+    </record>
+
     <record id="view_m4fr_vendor_bill_form" model="ir.ui.view">
         <field name="name">m4fr.vendor.bill.form</field>
         <field name="model">m4fr.vendor.bill</field>
         <field name="arch" type="xml">
             <form>
                 <header>
-                    <button name="validateBill" string="Konfirmasi" type="object" class="oe_highlight" invisible="payment_status != 'draft'"/>
-                    <button name="processPayment" string="Bayar &amp; Terima Barang" type="object" class="oe_highlight" invisible="payment_status != 'confirmed'"/>
+                    <button name="validateBill" string="Konfirmasi" type="object" 
+                            class="oe_highlight" invisible="payment_status != 'draft'"/>
+                    <button name="processPayment" string="Bayar &amp; Terima Barang" type="object" 
+                            class="oe_highlight" invisible="payment_status != 'confirmed'"/>
                     <field name="payment_status" widget="statusbar" statusbar_visible="draft,confirmed,paid"/>
                 </header>
                 <sheet>
+                    <div class="oe_title">
+                        <label for="vendor_bill_id" string="ID Tagihan"/>
+                        <h1>
+                            <field name="vendor_bill_id" readonly="1"/>
+                        </h1>
+                    </div>
                     <group>
                         <group>
-                            <field name="vendor_id"/>
+                            <field name="vendor_id" options="{'no_create': True}"/>
                             <field name="bill_date"/>
                         </group>
                         <group>
                             <field name="bill_type"/>
-                            <field name="vendor_bill_id"/>
                         </group>
                     </group>
                     <notebook>
-                        <page string="Item Bahan Baku">
+                        <page string="Item Bahan Baku" name="items">
                             <field name="bill_item_ids">
                                 <tree editable="bottom">
-                                    <field name="raw_material_id"/>
+                                    <field name="raw_material_id" options="{'no_create': True}"/>
                                     <field name="quantity"/>
                                     <field name="unit_price"/>
-                                    <field name="subtotal"/>
+                                    <field name="subtotal" readonly="1" force_save="1"/>
                                 </tree>
                             </field>
                         </page>
-                        <page string="Biaya Tambahan (Adjustments)">
+                        <page string="Biaya Tambahan (Adjustments)" name="adjustments">
                             <field name="adjustment_ids">
                                 <tree editable="bottom">
                                     <field name="adjustment_name"/>
@@ -41,7 +69,7 @@
                         </page>
                     </notebook>
                     <group class="oe_subtotal_footer oe_right">
-                        <field name="grand_total" class="oe_subtotal_footer_separator"/>
+                        <field name="grand_total" class="oe_subtotal_footer_separator" widget="monetary"/>
                     </group>
                 </sheet>
             </form>
@@ -52,8 +80,19 @@
         <field name="name">Tagihan Vendor</field>
         <field name="res_model">m4fr.vendor.bill</field>
         <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Buat tagihan vendor pertama Anda.
+            </p>
+            <p>
+                Gunakan menu ini untuk mencatat pembelian bahan baku dari vendor.
+            </p>
+        </field>
     </record>
 
-    <menuitem id="menu_m4fr_vendor_bill" name="Tagihan Vendor" parent="menu_m4fr_inventory_root" 
-              action="action_m4fr_vendor_bill" sequence="20"/>
+    <menuitem id="menu_m4fr_vendor_bill" 
+              name="Tagihan Vendor" 
+              parent="menu_m4fr_inventory_root" 
+              action="action_m4fr_vendor_bill" 
+              sequence="20"/>
 </odoo>

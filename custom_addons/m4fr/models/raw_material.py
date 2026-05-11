@@ -26,7 +26,7 @@ class RawMaterial(models.Model):
                     total += move.quantity
                 elif move.type == 'OUT':
                     total -= move.quantity
-                elif move.type == 'ADJ':
+                elif move.type == 'ADJUSTMENT':
                     total = move.quantity
             rec.stock = total
 

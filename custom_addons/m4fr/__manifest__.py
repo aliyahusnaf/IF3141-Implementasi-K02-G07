@@ -27,6 +27,7 @@
         # Views — D3 (tambahkan saat D3 siap)
         'views/material_movement_views.xml',
         'views/raw_material_views.xml',
+        'views/vendor_views.xml',
         'views/vendor_bill_views.xml',
         # Views — D4 (tambahkan saat D4 siap)
         # 'views/cash_flow_views.xml',
