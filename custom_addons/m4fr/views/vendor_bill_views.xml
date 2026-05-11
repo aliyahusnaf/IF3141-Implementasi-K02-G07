@@ -1,52 +1,48 @@
 <odoo>
-    <record id="view_m4fr_vendor_bill_tree" model="ir.ui.view">
-        <field name="name">m4fr.vendor.bill.tree</field>
-        <field name="model">m4fr.vendor.bill</field>
-        <field name="arch" type="xml">
-            <tree decoration-info="state == 'draft'" decoration-success="state == 'paid'">
-                <field name="name"/> <field name="vendor_id"/>
-                <field name="date_bill"/>
-                <field name="grand_total" sum="Total Keseluruhan"/>
-                <field name="state" widget="badge" decoration-info="state == 'draft'" decoration-success="state == 'paid'"/>
-            </tree>
-        </field>
-    </record>
-
     <record id="view_m4fr_vendor_bill_form" model="ir.ui.view">
         <field name="name">m4fr.vendor.bill.form</field>
         <field name="model">m4fr.vendor.bill</field>
         <field name="arch" type="xml">
             <form>
                 <header>
-                    <button name="action_confirm" string="Konfirmasi" type="object" class="oe_highlight" invisible="state != 'draft'"/>
-                    <button name="action_pay" string="Bayar" type="object" class="oe_highlight" invisible="state != 'confirmed'"/>
-                    <field name="state" widget="statusbar" statusbar_visible="draft,confirmed,paid"/>
+                    <button name="validateBill" string="Konfirmasi" type="object" class="oe_highlight" invisible="payment_status != 'draft'"/>
+                    <button name="processPayment" string="Bayar &amp; Terima Barang" type="object" class="oe_highlight" invisible="payment_status != 'confirmed'"/>
+                    <field name="payment_status" widget="statusbar" statusbar_visible="draft,confirmed,paid"/>
                 </header>
                 <sheet>
-                    <div class="oe_title">
-                        <h1><field name="name" readonly="1"/></h1>
-                    </div>
                     <group>
                         <group>
-                            <field name="vendor_id" options="{'no_create': True}"/>
-                            <field name="date_bill"/>
+                            <field name="vendor_id"/>
+                            <field name="bill_date"/>
+                        </group>
+                        <group>
+                            <field name="bill_type"/>
+                            <field name="vendor_bill_id"/>
                         </group>
                     </group>
                     <notebook>
-                        <page string="Item Pembelian" name="items">
+                        <page string="Item Bahan Baku">
                             <field name="bill_item_ids">
                                 <tree editable="bottom">
-                                    <field name="material_id"/>
+                                    <field name="raw_material_id"/>
                                     <field name="quantity"/>
                                     <field name="unit_price"/>
-                                    <field name="subtotal" readonly="1"/>
+                                    <field name="subtotal"/>
                                 </tree>
                             </field>
-                            <group class="oe_subtotal_footer oe_right">
-                                <field name="grand_total" class="oe_subtotal_footer_separator"/>
-                            </group>
+                        </page>
+                        <page string="Biaya Tambahan (Adjustments)">
+                            <field name="adjustment_ids">
+                                <tree editable="bottom">
+                                    <field name="adjustment_name"/>
+                                    <field name="amount"/>
+                                </tree>
+                            </field>
                         </page>
                     </notebook>
+                    <group class="oe_subtotal_footer oe_right">
+                        <field name="grand_total" class="oe_subtotal_footer_separator"/>
+                    </group>
                 </sheet>
             </form>
         </field>

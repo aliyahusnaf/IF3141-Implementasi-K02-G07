@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="view_m4fr_vendor_tree" model="ir.ui.view">
+        <field name="name">m4fr.vendor.tree</field>
+        <field name="model">m4fr.vendor</field>
+        <field name="arch" type="xml">
+            <tree string="Daftar Vendor">
+                <field name="vendor_id"/>
+                <field name="name"/>
+                <field name="contact_person"/>
+                <field name="phone_number"/>
+                <field name="email"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_m4fr_vendor_form" model="ir.ui.view">
+        <field name="name">m4fr.vendor.form</field>
+        <field name="model">m4fr.vendor</field>
+        <field name="arch" type="xml">
+            <form string="Form Vendor">
+                <sheet>
+                    <div class="oe_title">
+                        <label for="name" string="Nama Vendor"/>
+                        <h1>
+                            <field name="name" placeholder="Contoh: PT Tekstil Sejahtera"/>
+                        </h1>
+                    </div>
+                    <group>
+                        <group string="Informasi Kontak">
+                            <field name="vendor_id" placeholder="VND001"/>
+                            <field name="contact_person" placeholder="Nama PIC"/>
+                            <field name="phone_number" widget="phone"/>
+                            <field name="email" widget="email"/>
+                        </group>
+                        <group string="Lokasi">
+                            <field name="address" placeholder="Alamat lengkap vendor..."/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_m4fr_vendor" model="ir.actions.act_window">
+        <field name="name">Master Data Vendor</field>
+        <field name="res_model">m4fr.vendor</field>
+        <field name="view_mode">tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Belum ada data vendor.
+            </p>
+            <p>
+                Klik tombol "New" untuk menambahkan vendor baru agar bisa membuat Tagihan Vendor.
+            </p>
+        </field>
+    </record>
+
+    <menuitem id="menu_m4fr_vendor" 
+              name="Vendor" 
+              parent="menu_m4fr_inventory_root" 
+              action="action_m4fr_vendor" 
+              sequence="30"/>
+</odoo>
