@@ -4,6 +4,16 @@ from odoo.exceptions import AccessDenied
 from dateutil.relativedelta import relativedelta
 from datetime import date
 
+BULAN = {1:'Jan',2:'Feb',3:'Mar',4:'Apr',5:'Mei',6:'Jun',
+         7:'Jul',8:'Agu',9:'Sep',10:'Okt',11:'Nov',12:'Des'}
+
+CATEGORY_LABEL = {
+    'PENDAPATAN_PESANAN':  'Pendapatan Pesanan',
+    'PEMBELIAN_BAHAN_BAKU': 'Pembelian Bahan Baku',
+    'BEBAN_OPERASIONAL':   'Beban Operasional',
+    'LAINNYA':             'Lainnya',
+}
+
 
 class DashboardController(http.Controller):
 
@@ -12,7 +22,6 @@ class DashboardController(http.Controller):
             raise AccessDenied()
 
     def _get_period_dates(self, period):
-        """Return (start_str, end_str) berformat 'YYYY-MM-DD' sesuai period."""
         today = date.today()
         if period == 'last_month':
             end = today.replace(day=1) - relativedelta(days=1)
@@ -24,10 +33,21 @@ class DashboardController(http.Controller):
         elif period == 'this_year':
             start = today.replace(month=1, day=1)
             end = today.replace(month=12, day=31)
-        else:  # default: this_month
+        else:  # this_month
             start = today.replace(day=1)
             end = (start + relativedelta(months=1)) - relativedelta(days=1)
-        return start.strftime('%Y-%m-%d'), end.strftime('%Y-%m-%d')
+        return start, end
+
+    def _monthly_breakdown(self, start, end):
+        """Bangun list bulan dari start s.d. end, return list of (month_start, month_end, label)."""
+        months = []
+        cur = start.replace(day=1)
+        while cur <= end:
+            m_start = cur
+            m_end = min((cur + relativedelta(months=1)) - relativedelta(days=1), end)
+            months.append((m_start, m_end, BULAN.get(cur.month, str(cur.month))))
+            cur = cur + relativedelta(months=1)
+        return months
 
     # ------------------------------------------------------------------
     # KPI
@@ -37,65 +57,139 @@ class DashboardController(http.Controller):
     def fetch_kpi_data(self, period='this_month'):
         self._check_access()
         start, end = self._get_period_dates(period)
+        start_str = start.strftime('%Y-%m-%d')
+        end_str   = end.strftime('%Y-%m-%d')
 
-        # Real query dari D1: pesanan dengan status selesai
+        # Total Pendapatan — sum total_snapshot invoice yang sudah lunas dalam periode
+        paid_invoices = request.env['m4fr.invoice'].search([
+            ('invoice_status', '=', 'paid'),
+            ('issue_date', '>=', start_str),
+            ('issue_date', '<=', end_str),
+        ])
+        total_pendapatan = sum(paid_invoices.mapped('total_snapshot'))
+
+        # Total Pengeluaran — sum cash_flow direction=OUT dalam periode
+        outflows = request.env['m4fr.cash.flow'].search([
+            ('direction', '=', 'OUT'),
+            ('state', '=', 'posted'),
+            ('transaction_date', '>=', start_str + ' 00:00:00'),
+            ('transaction_date', '<=', end_str + ' 23:59:59'),
+        ])
+        total_pengeluaran = sum(outflows.mapped('amount'))
+
+        # Pesanan Selesai — sale.order production_status=done dalam periode
         pesanan_selesai = request.env['sale.order'].search_count([
             ('production_status', '=', 'done'),
-            ('date_order', '>=', start + ' 00:00:00'),
-            ('date_order', '<=', end + ' 23:59:59'),
+            ('date_order', '>=', start_str + ' 00:00:00'),
+            ('date_order', '<=', end_str + ' 23:59:59'),
         ])
 
-        # Dummy data — diganti saat D2 (invoice), D3 (stok), D4 (cashflow) siap
+        # Nilai Stok Gudang — stock × standard_unit_price semua bahan baku
+        materials = request.env['m4fr.raw.material'].search([])
+        nilai_stok = sum(m.stock * m.standard_unit_price for m in materials)
+
         return {
-            'total_pendapatan': 150_000_000,
-            'total_pengeluaran': 85_000_000,
-            'laba_bersih': 65_000_000,
+            'total_pendapatan': total_pendapatan,
+            'total_pengeluaran': total_pengeluaran,
+            'laba_bersih': total_pendapatan - total_pengeluaran,
             'pesanan_selesai': pesanan_selesai,
-            'nilai_stok': 45_000_000,
-            'period_start': start,
-            'period_end': end,
+            'nilai_stok': nilai_stok,
+            'period_start': start_str,
+            'period_end': end_str,
         }
 
     # ------------------------------------------------------------------
-    # Chart data
+    # Chart: Pendapatan vs Pengeluaran per bulan (bar)
     # ------------------------------------------------------------------
 
     @http.route('/m4fr/dashboard/chart/revenue', type='json', auth='user')
     def chart_revenue(self, period='this_month'):
         self._check_access()
-        # Dummy data: pendapatan vs pengeluaran per bulan
-        # Diganti dengan read_group dari m4fr.cash.flow saat D4 siap
-        return [
-            {'bulan': 'Jan', 'pendapatan': 12_000_000, 'pengeluaran': 7_500_000},
-            {'bulan': 'Feb', 'pendapatan': 15_000_000, 'pengeluaran': 8_200_000},
-            {'bulan': 'Mar', 'pendapatan': 18_000_000, 'pengeluaran': 9_100_000},
-            {'bulan': 'Apr', 'pendapatan': 14_000_000, 'pengeluaran': 8_800_000},
-            {'bulan': 'Mei', 'pendapatan': 20_000_000, 'pengeluaran': 11_000_000},
-            {'bulan': 'Jun', 'pendapatan': 22_000_000, 'pengeluaran': 12_500_000},
-        ]
+        start, end = self._get_period_dates(period)
+        result = []
+
+        for m_start, m_end, label in self._monthly_breakdown(start, end):
+            ms = m_start.strftime('%Y-%m-%d')
+            me = m_end.strftime('%Y-%m-%d')
+
+            inv = request.env['m4fr.invoice'].search([
+                ('invoice_status', '=', 'paid'),
+                ('issue_date', '>=', ms),
+                ('issue_date', '<=', me),
+            ])
+            pendapatan = sum(inv.mapped('total_snapshot'))
+
+            out = request.env['m4fr.cash.flow'].search([
+                ('direction', '=', 'OUT'),
+                ('state', '=', 'posted'),
+                ('transaction_date', '>=', ms + ' 00:00:00'),
+                ('transaction_date', '<=', me + ' 23:59:59'),
+            ])
+            pengeluaran = sum(out.mapped('amount'))
+
+            result.append({'bulan': label, 'pendapatan': pendapatan, 'pengeluaran': pengeluaran})
+
+        return result
+
+    # ------------------------------------------------------------------
+    # Chart: Tren Laba Bersih per bulan (line)
+    # ------------------------------------------------------------------
 
     @http.route('/m4fr/dashboard/chart/profit', type='json', auth='user')
     def chart_profit(self, period='this_month'):
         self._check_access()
-        # Dummy data: tren laba bersih per bulan
-        # Diganti dengan kalkulasi dari m4fr.cash.flow saat D4 siap
-        return [
-            {'bulan': 'Jan', 'laba': 4_500_000},
-            {'bulan': 'Feb', 'laba': 6_800_000},
-            {'bulan': 'Mar', 'laba': 8_900_000},
-            {'bulan': 'Apr', 'laba': 5_200_000},
-            {'bulan': 'Mei', 'laba': 9_000_000},
-            {'bulan': 'Jun', 'laba': 9_500_000},
-        ]
+        start, end = self._get_period_dates(period)
+        result = []
+
+        for m_start, m_end, label in self._monthly_breakdown(start, end):
+            ms = m_start.strftime('%Y-%m-%d')
+            me = m_end.strftime('%Y-%m-%d')
+
+            inv = request.env['m4fr.invoice'].search([
+                ('invoice_status', '=', 'paid'),
+                ('issue_date', '>=', ms),
+                ('issue_date', '<=', me),
+            ])
+            pendapatan = sum(inv.mapped('total_snapshot'))
+
+            out = request.env['m4fr.cash.flow'].search([
+                ('direction', '=', 'OUT'),
+                ('state', '=', 'posted'),
+                ('transaction_date', '>=', ms + ' 00:00:00'),
+                ('transaction_date', '<=', me + ' 23:59:59'),
+            ])
+            pengeluaran = sum(out.mapped('amount'))
+
+            result.append({'bulan': label, 'laba': pendapatan - pengeluaran})
+
+        return result
+
+    # ------------------------------------------------------------------
+    # Chart: Komposisi Pengeluaran per kategori (pie)
+    # ------------------------------------------------------------------
 
     @http.route('/m4fr/dashboard/chart/expense-breakdown', type='json', auth='user')
     def chart_expense_breakdown(self, period='this_month'):
         self._check_access()
-        # Dummy data: komposisi pengeluaran per kategori
-        # Diganti dengan read_group dari m4fr.cash.flow saat D4 siap
+        start, end = self._get_period_dates(period)
+        start_str = start.strftime('%Y-%m-%d')
+        end_str   = end.strftime('%Y-%m-%d')
+
+        outflows = request.env['m4fr.cash.flow'].search([
+            ('direction', '=', 'OUT'),
+            ('state', '=', 'posted'),
+            ('transaction_date', '>=', start_str + ' 00:00:00'),
+            ('transaction_date', '<=', end_str + ' 23:59:59'),
+        ])
+
+        totals = {}
+        for flow in outflows:
+            totals[flow.category] = totals.get(flow.category, 0.0) + flow.amount
+
+        if not totals:
+            return [{'kategori': 'Belum ada data', 'jumlah': 0}]
+
         return [
-            {'kategori': 'Bahan Baku', 'jumlah': 45_000_000},
-            {'kategori': 'Tenaga Kerja', 'jumlah': 25_000_000},
-            {'kategori': 'Overhead', 'jumlah': 10_000_000},
-            {'kategori': 'Distribusi', 'jumlah': 5_000_000},
+            {'kategori': CATEGORY_LABEL.get(cat, cat), 'jumlah': amt}
+            for cat, amt in totals.items()
         ]
