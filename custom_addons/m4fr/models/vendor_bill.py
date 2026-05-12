@@ -61,6 +61,9 @@ class VendorBill(models.Model):
                 })
 
     def triggerCashFlowOUT(self):
-        # Wiring to D4
-        # self.env['m4fr.cash.flow'].createJournalEntry(self.grand_total, 'OUT', 'PEMBELIAN_BAHAN_BAKU', self.vendor_bill_id)
-        pass
+        self.env['m4fr.cash.flow'].createJournalEntry(
+            amount=self.grand_total,
+            direction='OUT',
+            category='PEMBELIAN_BAHAN_BAKU',
+            reference_id=self.vendor_bill_id,
+        )
