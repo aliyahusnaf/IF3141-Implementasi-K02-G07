@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+        <record id="view_m4fr_invoice_tree" model="ir.ui.view">
+                <field name="name">m4fr.invoice.tree</field>
+                <field name="model">m4fr.invoice</field>
+                <field name="arch" type="xml">
+                        <tree string="Tagihan M4FR">
+                                <field name="name"/>
+                                <field name="order_id"/>
+                                <field name="issue_date"/>
+                                <field name="due_date"/>
+                                <field name="amount_due"/>
+                                <field name="invoice_status"/>
+                        </tree>
+                </field>
+        </record>
+
+        <record id="view_m4fr_invoice_form" model="ir.ui.view">
+                <field name="name">m4fr.invoice.form</field>
+                <field name="model">m4fr.invoice</field>
+                <field name="arch" type="xml">
+                        <form string="Tagihan M4FR">
+                                <header>
+                                        <field name="invoice_status" widget="statusbar" statusbar_visible="draft,posted,in_payment,paid"/>
+                                        <button name="postInvoice" string="Konfirmasi" type="object" class="btn-primary" invisible="invoice_status != 'draft'"/>
+                                        <button name="action_send_invoice" string="Kirim Invoice" type="object" class="btn-secondary" invisible="invoice_status != 'posted'"/>
+                                        <button name="action_open_payment_wizard"
+                                                string="Validasi Pembayaran"
+                                                type="object"
+                                                class="btn-primary"
+                                                groups="m4fr.group_m4fr_admin,m4fr.group_m4fr_direktur,m4fr.group_m4fr_manajer_keuangan"
+                                                invisible="invoice_status not in ('posted', 'in_payment')"/>
+                                </header>
+                                <sheet>
+                                        <group>
+                                                <group>
+                                                        <field name="name" readonly="1"/>
+                                                        <field name="order_id" readonly="1"/>
+                                                        <field name="issue_date"/>
+                                                        <field name="due_date"/>
+                                                </group>
+                                                <group>
+                                                        <field name="currency_id" invisible="1"/>
+                                                        <field name="total_snapshot" widget="monetary" readonly="1"/>
+                                                        <field name="demand_type"/>
+                                                        <field name="demand_value"/>
+                                                        <field name="amount_due" widget="monetary" readonly="1"/>
+                                                </group>
+                                        </group>
+                                        <notebook>
+                                                <page string="Pembayaran">
+                                                        <field name="payment_ids" readonly="1">
+                                                                <tree>
+                                                                        <field name="payment_date"/>
+                                                                        <field name="amount"/>
+                                                                        <field name="payment_method"/>
+                                                                        <field name="receipt_url"/>
+                                                                </tree>
+                                                        </field>
+                                                </page>
+                                        </notebook>
+                                </sheet>
+                        </form>
+                </field>
+        </record>
+
+        <record id="action_m4fr_invoice" model="ir.actions.act_window">
+                <field name="name">Tagihan M4FR</field>
+                <field name="res_model">m4fr.invoice</field>
+                <field name="view_mode">tree,form</field>
+        </record>
+</odoo>
