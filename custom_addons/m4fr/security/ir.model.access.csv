@@ -37,3 +37,7 @@ access_m4fr_vendor_bill_item_admin,vendor.bill.item.admin,model_m4fr_vendor_bill
 access_m4fr_vendor_bill_item_finance,vendor.bill.item.finance,model_m4fr_vendor_bill_item,m4fr.group_m4fr_manajer_keuangan,1,1,1,1
 access_m4fr_vendor_adjustment_admin,vendor.adjustment.admin,model_m4fr_vendor_adjustment,m4fr.group_m4fr_admin,1,1,1,1
 access_m4fr_vendor_adjustment_finance,vendor.adjustment.finance,model_m4fr_vendor_adjustment,m4fr.group_m4fr_manajer_keuangan,1,1,1,1
+access_m4fr_cash_flow_direktur,m4fr.cash.flow.direktur,model_m4fr_cash_flow,m4fr.group_m4fr_direktur,1,0,0,0
+access_m4fr_cash_flow_keuangan,m4fr.cash.flow.keuangan,model_m4fr_cash_flow,m4fr.group_m4fr_manajer_keuangan,1,0,0,0
+access_m4fr_tax_controller_direktur,m4fr.tax.controller.direktur,model_m4fr_tax_controller,m4fr.group_m4fr_direktur,1,1,1,1
+access_m4fr_tax_controller_keuangan,m4fr.tax.controller.keuangan,model_m4fr_tax_controller,m4fr.group_m4fr_manajer_keuangan,1,1,1,1

@@ -33,10 +33,10 @@
                             <field name="is_adjustment" column_invisible="1"/>
                             <field name="product_id" string="Produk/Jenis" optional="show"/>
                             <field name="name" string="Keterangan"/>
-                            <field name="price_unit" string="Jumlah"/>
+                            <field name="price_unit" string="Jumlah" widget="monetary"/>
                             <field name="product_uom_qty" string="Qty" optional="hide"/>
                             <field name="currency_id" column_invisible="1"/>
-                            <field name="price_subtotal" string="Subtotal"/>
+                            <field name="price_subtotal" string="Subtotal" widget="monetary"/>
                         </tree>
                     </field>
                 </page>
@@ -72,6 +72,13 @@
             </xpath>
 
         </field>
+    </record>
+
+    <!-- ── Action: semua pesanan (termasuk draft/quotation) ─────────────────── -->
+    <record id="action_m4fr_all_sale_orders" model="ir.actions.act_window">
+        <field name="name">Pesanan</field>
+        <field name="res_model">sale.order</field>
+        <field name="view_mode">tree,form</field>
     </record>
 
     <!-- ── Extend search sale.order — filter produksi & group by klien ──────── -->
@@ -114,7 +121,7 @@
         <field name="arch" type="xml">
             <xpath expr="//field[@name='date_order']" position="after">
                 <field name="deadline_at" optional="show" string="Tenggat"/>
-                <field name="production_status" optional="show" string="Produksi"/>
+                <field name="status_display" optional="show" string="Status"/>
             </xpath>
         </field>
     </record>

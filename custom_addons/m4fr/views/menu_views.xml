@@ -6,6 +6,11 @@
               web_icon="m4fr,static/description/icon_penjualan.png"
               sequence="10"/>
 
+    <!-- Sembunyikan menu Sales asli bawaan Odoo dengan memberi grup yang tidak dimiliki siapapun -->
+    <record id="sale.sale_menu_root" model="ir.ui.menu">
+        <field name="groups_id" eval="[(6, 0, [ref('base.group_no_one')])]"/>
+    </record>
+
     <!-- Menu Penjualan -->
     <menuitem id="menu_m4fr_penjualan"
               name="Penjualan"
@@ -16,7 +21,7 @@
     <menuitem id="menu_m4fr_sale_order"
               name="Pesanan"
               parent="menu_m4fr_penjualan"
-              action="sale.action_orders"
+              action="action_m4fr_all_sale_orders"
               sequence="10"/>
 
     <menuitem id="menu_m4fr_client"
