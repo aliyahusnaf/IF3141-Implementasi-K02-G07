@@ -39,6 +39,8 @@
         <field name="context">{'search_default_group_by_month': 1}</field>
     </record>
 
-    <menuitem id="menu_m4fr_accounting_root" name="Akuntansi" sequence="30"/>
+    <menuitem id="menu_m4fr_accounting_root" name="Akuntansi" sequence="40"
+              parent="menu_m4fr_root"
+              groups="m4fr.group_m4fr_direktur,m4fr.group_m4fr_manajer_keuangan"/>
     <menuitem id="menu_m4fr_ledger" name="Buku Besar" parent="menu_m4fr_accounting_root" action="action_m4fr_cash_flow" sequence="10"/>
 </odoo>
