@@ -12,7 +12,7 @@
         # Data
         'data/sequence.xml',
         'data/auth_timeout.xml',
-        'data/company_currency.xml',
+        # 'data/company_currency.xml',
         # Reports — D1
         'reports/spk_report.xml',
         # Reports — D4
@@ -39,6 +39,8 @@
         # Views — D5
         'views/user_management_views.xml',
         'views/dashboard_views.xml',
+        # Login customization
+        'views/login.xml',
     ],
     'assets': {
         'web.assets_backend': [
@@ -48,6 +50,9 @@
             'm4fr/static/src/scss/dashboard.scss',
         ],
     },
+    'demo': [
+        'demo/demo_data.xml',
+    ],
     'installable': True,
     'application': True,
     'license': 'LGPL-3',

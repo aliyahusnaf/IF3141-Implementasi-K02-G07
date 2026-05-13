@@ -1,0 +1,486 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    Demo data M4FR — semua domain saling berkaitan.
+    Hanya di-load pada database demo (centang "Demo" saat buat database baru).
+
+    Ringkasan data:
+    - 3 Pelanggan / Sales Orders (status: done, sewing, cutting)
+    - 3 Invoice (paid, in_payment, posted)
+    - 5 Pembayaran + Cash Flow IN/OUT
+    - 3 Bahan Baku, 2 Vendor, 2 Vendor Bill
+    - 5 Test Users (satu per peran JB-01..JB-05)
+    - Password semua user: Password123
+-->
+<odoo>
+    <data>
+
+        <!-- ============================================================
+             PRODUK GENERIK — dipakai oleh sale.order.line
+             ============================================================ -->
+        <record id="demo_product_garmen" model="product.product">
+            <field name="name">Jasa Garmen M4FR</field>
+            <field name="type">service</field>
+            <field name="list_price">150000.0</field>
+        </record>
+
+        <!-- ============================================================
+             D1 — KLIEN
+             ============================================================ -->
+        <!-- res.partner: dipakai sebagai partner_id pada sale.order -->
+        <record id="demo_partner_maju" model="res.partner">
+            <field name="name">PT Maju Jaya Tekstil</field>
+            <field name="email">maju@example.com</field>
+            <field name="customer_rank">1</field>
+        </record>
+        <record id="demo_partner_fashion" model="res.partner">
+            <field name="name">CV Fashion Bersama</field>
+            <field name="email">fashion@example.com</field>
+            <field name="customer_rank">1</field>
+        </record>
+        <record id="demo_partner_garmen" model="res.partner">
+            <field name="name">PT Garmen Prima</field>
+            <field name="email">garmen@example.com</field>
+            <field name="customer_rank">1</field>
+        </record>
+
+        <!-- m4fr.client: master data pelanggan M4FR -->
+        <record id="demo_client_1" model="m4fr.client">
+            <field name="name">PT Maju Jaya Tekstil</field>
+            <field name="email">maju@example.com</field>
+            <field name="phone">021-111111</field>
+            <field name="address">Jl. Industri No. 1, Cakung</field>
+            <field name="city">Jakarta</field>
+        </record>
+        <record id="demo_client_2" model="m4fr.client">
+            <field name="name">CV Fashion Bersama</field>
+            <field name="email">fashion@example.com</field>
+            <field name="phone">022-222222</field>
+            <field name="address">Jl. Braga No. 5</field>
+            <field name="city">Bandung</field>
+        </record>
+        <record id="demo_client_3" model="m4fr.client">
+            <field name="name">PT Garmen Prima</field>
+            <field name="email">garmen@example.com</field>
+            <field name="phone">031-333333</field>
+            <field name="address">Jl. Raya Gubeng No. 10</field>
+            <field name="city">Surabaya</field>
+        </record>
+
+        <!-- ============================================================
+             D1 — SALES ORDERS
+             SO-001 : 2 bulan lalu, SELESAI, terkunci        → Rp 15.500.000
+             SO-002 : bulan lalu, sedang JAHIT               → Rp 14.350.000
+             SO-003 : minggu ini, baru CUTTING               → Rp 12.250.000
+             ============================================================ -->
+        <record id="demo_so_001" model="sale.order">
+            <field name="name">M4FR/SO/DEMO/001</field>
+            <field name="partner_id" ref="demo_partner_maju"/>
+            <field name="state">sale</field>
+            <field name="production_status">done</field>
+            <field name="is_locked">True</field>
+            <field name="deadline_at">2026-03-20 00:00:00</field>
+            <field name="date_order">2026-03-01 08:00:00</field>
+        </record>
+        <record id="demo_so_001_item_1" model="sale.order.line">
+            <field name="order_id" ref="demo_so_001"/>
+            <field name="product_id" ref="demo_product_garmen"/>
+            <field name="product_uom_qty">100</field>
+            <field name="price_unit">150000</field>
+            <field name="specification">Kaos garmen custom katun premium, sablon warna hitam</field>
+            <field name="is_adjustment">False</field>
+        </record>
+        <record id="demo_so_001_adj_1" model="sale.order.line">
+            <field name="order_id" ref="demo_so_001"/>
+            <field name="product_id" ref="demo_product_garmen"/>
+            <field name="product_uom_qty">1</field>
+            <field name="price_unit">500000</field>
+            <field name="specification">Biaya desain logo dan packing premium</field>
+            <field name="is_adjustment">True</field>
+        </record>
+
+        <record id="demo_so_002" model="sale.order">
+            <field name="name">M4FR/SO/DEMO/002</field>
+            <field name="partner_id" ref="demo_partner_fashion"/>
+            <field name="state">sale</field>
+            <field name="production_status">sewing</field>
+            <field name="is_locked">False</field>
+            <field name="deadline_at">2026-05-22 00:00:00</field>
+            <field name="date_order">2026-04-10 09:00:00</field>
+        </record>
+        <record id="demo_so_002_item_1" model="sale.order.line">
+            <field name="order_id" ref="demo_so_002"/>
+            <field name="product_id" ref="demo_product_garmen"/>
+            <field name="product_uom_qty">80</field>
+            <field name="price_unit">175000</field>
+            <field name="specification">Kemeja batik modern lengan pendek, motif parang</field>
+            <field name="is_adjustment">False</field>
+        </record>
+        <record id="demo_so_002_adj_1" model="sale.order.line">
+            <field name="order_id" ref="demo_so_002"/>
+            <field name="product_id" ref="demo_product_garmen"/>
+            <field name="product_uom_qty">1</field>
+            <field name="price_unit">350000</field>
+            <field name="specification">Biaya ekspedisi ke Bandung</field>
+            <field name="is_adjustment">True</field>
+        </record>
+
+        <record id="demo_so_003" model="sale.order">
+            <field name="name">M4FR/SO/DEMO/003</field>
+            <field name="partner_id" ref="demo_partner_garmen"/>
+            <field name="state">sale</field>
+            <field name="production_status">cutting</field>
+            <field name="is_locked">False</field>
+            <field name="deadline_at">2026-06-10 00:00:00</field>
+            <field name="date_order">2026-05-10 10:00:00</field>
+        </record>
+        <record id="demo_so_003_item_1" model="sale.order.line">
+            <field name="order_id" ref="demo_so_003"/>
+            <field name="product_id" ref="demo_product_garmen"/>
+            <field name="product_uom_qty">60</field>
+            <field name="price_unit">200000</field>
+            <field name="specification">Jaket bomber bahan denim premium, bordir logo</field>
+            <field name="is_adjustment">False</field>
+        </record>
+        <record id="demo_so_003_adj_1" model="sale.order.line">
+            <field name="order_id" ref="demo_so_003"/>
+            <field name="product_id" ref="demo_product_garmen"/>
+            <field name="product_uom_qty">1</field>
+            <field name="price_unit">250000</field>
+            <field name="specification">Biaya sample dan fitting awal</field>
+            <field name="is_adjustment">True</field>
+        </record>
+
+        <!-- Riwayat Status Produksi -->
+        <record id="demo_status_001a" model="m4fr.order.status">
+            <field name="order_id" ref="demo_so_001"/>
+            <field name="status">sale</field>
+            <field name="note">Pesanan dikonfirmasi oleh admin</field>
+            <field name="changed_by" ref="base.user_admin"/>
+        </record>
+        <record id="demo_status_001b" model="m4fr.order.status">
+            <field name="order_id" ref="demo_so_001"/>
+            <field name="status">done</field>
+            <field name="note">Produksi selesai, QC lulus, siap pengiriman</field>
+            <field name="changed_by" ref="base.user_admin"/>
+        </record>
+        <record id="demo_status_002" model="m4fr.order.status">
+            <field name="order_id" ref="demo_so_002"/>
+            <field name="status">sale</field>
+            <field name="note">Pesanan dikonfirmasi</field>
+            <field name="changed_by" ref="base.user_admin"/>
+        </record>
+        <record id="demo_status_003" model="m4fr.order.status">
+            <field name="order_id" ref="demo_so_003"/>
+            <field name="status">sale</field>
+            <field name="note">Pesanan dikonfirmasi</field>
+            <field name="changed_by" ref="base.user_admin"/>
+        </record>
+
+        <!-- ============================================================
+             D2 — INVOICE DAN PEMBAYARAN
+             INV-001 : PAID    (SO-001 lunas, dua termin)
+             INV-002 : IN_PAYMENT (SO-002 sudah DP 50%)
+             INV-003 : POSTED  (SO-003 menunggu DP)
+             ============================================================ -->
+        <record id="demo_inv_001" model="m4fr.invoice">
+            <field name="name">M4FR/INV/DEMO/001</field>
+            <field name="order_id" ref="demo_so_001"/>
+            <field name="total_snapshot">15500000</field>
+            <field name="demand_type">percent</field>
+            <field name="demand_value">50.0</field>
+            <field name="invoice_status">paid</field>
+            <field name="issue_date">2026-03-02</field>
+            <field name="due_date">2026-03-20</field>
+        </record>
+        <!-- Pembayaran DP (50% = 7.750.000) -->
+        <record id="demo_pay_001a" model="m4fr.order.payment">
+            <field name="invoice_id" ref="demo_inv_001"/>
+            <field name="amount">7750000</field>
+            <field name="payment_method">transfer</field>
+            <field name="payment_date">2026-03-05</field>
+        </record>
+        <!-- Pembayaran Pelunasan (50% = 7.750.000) -->
+        <record id="demo_pay_001b" model="m4fr.order.payment">
+            <field name="invoice_id" ref="demo_inv_001"/>
+            <field name="amount">7750000</field>
+            <field name="payment_method">transfer</field>
+            <field name="payment_date">2026-03-18</field>
+        </record>
+
+        <record id="demo_inv_002" model="m4fr.invoice">
+            <field name="name">M4FR/INV/DEMO/002</field>
+            <field name="order_id" ref="demo_so_002"/>
+            <field name="total_snapshot">14350000</field>
+            <field name="demand_type">percent</field>
+            <field name="demand_value">50.0</field>
+            <field name="invoice_status">in_payment</field>
+            <field name="issue_date">2026-04-15</field>
+            <field name="due_date">2026-05-25</field>
+        </record>
+        <!-- Pembayaran DP (50% = 7.175.000) -->
+        <record id="demo_pay_002" model="m4fr.order.payment">
+            <field name="invoice_id" ref="demo_inv_002"/>
+            <field name="amount">7175000</field>
+            <field name="payment_method">transfer</field>
+            <field name="payment_date">2026-04-20</field>
+        </record>
+
+        <record id="demo_inv_003" model="m4fr.invoice">
+            <field name="name">M4FR/INV/DEMO/003</field>
+            <field name="order_id" ref="demo_so_003"/>
+            <field name="total_snapshot">12250000</field>
+            <field name="demand_type">percent</field>
+            <field name="demand_value">50.0</field>
+            <field name="invoice_status">posted</field>
+            <field name="issue_date">2026-05-11</field>
+            <field name="due_date">2026-06-10</field>
+        </record>
+
+        <!-- ============================================================
+             D3 — BAHAN BAKU
+             stock = Σ IN − Σ OUT (dihitung dari material.movement)
+             kain  : IN 50kg, OUT 30+10 = 40kg → stok akhir 10 kg
+             benang: belum ada movement → stok 0
+             kancing: belum ada movement → stok 0
+             ============================================================ -->
+        <record id="demo_mat_kain" model="m4fr.raw.material">
+            <field name="name">Kain Katun Premium</field>
+            <field name="unit_name">kg</field>
+            <field name="standard_unit_price">80000</field>
+        </record>
+        <record id="demo_mat_benang" model="m4fr.raw.material">
+            <field name="name">Benang Jahit</field>
+            <field name="unit_name">pcs</field>
+            <field name="standard_unit_price">15000</field>
+        </record>
+        <record id="demo_mat_kancing" model="m4fr.raw.material">
+            <field name="name">Kancing Baju</field>
+            <field name="unit_name">pcs</field>
+            <field name="standard_unit_price">3000</field>
+        </record>
+
+        <!-- ============================================================
+             D3 — VENDOR
+             ============================================================ -->
+        <record id="demo_vendor_1" model="m4fr.vendor">
+            <field name="name">PT Tekstil Nusantara</field>
+            <field name="contact_person">Budi Santoso</field>
+            <field name="email">tekstil@nusantara.com</field>
+            <field name="phone_number">021-777888</field>
+            <field name="address">Jl. Industri No. 10, Cakung, Jakarta</field>
+        </record>
+        <record id="demo_vendor_2" model="m4fr.vendor">
+            <field name="name">CV Benang Sejahtera</field>
+            <field name="contact_person">Siti Rahayu</field>
+            <field name="email">benang@sejahtera.com</field>
+            <field name="phone_number">022-999000</field>
+            <field name="address">Jl. Raya Bandung No. 45</field>
+        </record>
+
+        <!-- ============================================================
+             D3 — VENDOR BILL
+             Bill-1 : Kain Katun 50kg, PAID
+                      grand_total = 1.11 × (50 × 80.000) + 150.000 = 4.590.000
+             Bill-2 : Benang 30pcs + Kancing 200pcs, CONFIRMED
+                      grand_total = 1.11 × (450.000 + 600.000) = 1.165.500
+             ============================================================ -->
+        <record id="demo_bill_1" model="m4fr.vendor.bill">
+            <field name="vendor_id" ref="demo_vendor_1"/>
+            <field name="bill_date">2026-03-11</field>
+            <field name="bill_type">standard</field>
+            <field name="payment_status">paid</field>
+        </record>
+        <record id="demo_bill_1_item_1" model="m4fr.vendor.bill.item">
+            <field name="vendor_bill_id" ref="demo_bill_1"/>
+            <field name="raw_material_id" ref="demo_mat_kain"/>
+            <field name="quantity">50</field>
+            <field name="unit_price">80000</field>
+        </record>
+        <record id="demo_bill_1_adj_1" model="m4fr.vendor.adjustment">
+            <field name="vendor_bill_id" ref="demo_bill_1"/>
+            <field name="adjustment_name">Biaya Pengiriman</field>
+            <field name="amount">150000</field>
+        </record>
+
+        <record id="demo_bill_2" model="m4fr.vendor.bill">
+            <field name="vendor_id" ref="demo_vendor_2"/>
+            <field name="bill_date">2026-05-09</field>
+            <field name="bill_type">standard</field>
+            <field name="payment_status">confirmed</field>
+        </record>
+        <record id="demo_bill_2_item_1" model="m4fr.vendor.bill.item">
+            <field name="vendor_bill_id" ref="demo_bill_2"/>
+            <field name="raw_material_id" ref="demo_mat_benang"/>
+            <field name="quantity">30</field>
+            <field name="unit_price">15000</field>
+        </record>
+        <record id="demo_bill_2_item_2" model="m4fr.vendor.bill.item">
+            <field name="vendor_bill_id" ref="demo_bill_2"/>
+            <field name="raw_material_id" ref="demo_mat_kancing"/>
+            <field name="quantity">200</field>
+            <field name="unit_price">3000</field>
+        </record>
+
+        <!-- ============================================================
+             D3 — MATERIAL MOVEMENT
+             Catatan: stock dihitung otomatis dari movement_ids (stored computed)
+             ============================================================ -->
+        <record id="demo_mov_in_kain" model="m4fr.material.movement">
+            <field name="raw_material_id" ref="demo_mat_kain"/>
+            <field name="quantity">50</field>
+            <field name="type">IN</field>
+            <field name="movement_date">2026-03-13 09:00:00</field>
+            <field name="note">Penerimaan dari PT Tekstil Nusantara</field>
+        </record>
+        <record id="demo_mov_out_so001" model="m4fr.material.movement">
+            <field name="raw_material_id" ref="demo_mat_kain"/>
+            <field name="quantity">30</field>
+            <field name="type">OUT</field>
+            <field name="order_id" ref="demo_so_001"/>
+            <field name="movement_date">2026-03-14 08:00:00</field>
+            <field name="note">Pemakaian produksi M4FR/SO/DEMO/001</field>
+        </record>
+        <record id="demo_mov_out_so002" model="m4fr.material.movement">
+            <field name="raw_material_id" ref="demo_mat_kain"/>
+            <field name="quantity">10</field>
+            <field name="type">OUT</field>
+            <field name="order_id" ref="demo_so_002"/>
+            <field name="movement_date">2026-04-12 08:00:00</field>
+            <field name="note">Pemakaian produksi M4FR/SO/DEMO/002</field>
+        </record>
+        <!-- Stok kain akhir: 50 - 30 - 10 = 10 kg -->
+
+        <!-- ============================================================
+             D4 — CASH FLOW
+             Dibuat eksplisit karena method triggerCashFlowIN/OUT
+             tidak dipanggil otomatis saat load data XML.
+
+             IN  : DP inv-001 (Mar) + Pelunasan inv-001 (Mar) + DP inv-002 (Apr)
+             OUT : Vendor bill-1 (Mar) + Operasional (Mar, Apr, Mei)
+             ============================================================ -->
+        <!-- Pendapatan: INV-001 DP -->
+        <record id="demo_cf_in_001a" model="m4fr.cash.flow">
+            <field name="amount">7750000</field>
+            <field name="direction">IN</field>
+            <field name="category">PENDAPATAN_PESANAN</field>
+            <field name="transaction_date">2026-03-05 10:00:00</field>
+            <field name="reference_id">M4FR/INV/DEMO/001 - DP</field>
+            <field name="note">Pembayaran DP 50% dari PT Maju Jaya Tekstil</field>
+            <field name="state">posted</field>
+        </record>
+        <!-- Pendapatan: INV-001 Pelunasan -->
+        <record id="demo_cf_in_001b" model="m4fr.cash.flow">
+            <field name="amount">7750000</field>
+            <field name="direction">IN</field>
+            <field name="category">PENDAPATAN_PESANAN</field>
+            <field name="transaction_date">2026-03-18 11:00:00</field>
+            <field name="reference_id">M4FR/INV/DEMO/001 - Pelunasan</field>
+            <field name="note">Pelunasan 50% dari PT Maju Jaya Tekstil</field>
+            <field name="state">posted</field>
+        </record>
+        <!-- Pendapatan: INV-002 DP -->
+        <record id="demo_cf_in_002" model="m4fr.cash.flow">
+            <field name="amount">7175000</field>
+            <field name="direction">IN</field>
+            <field name="category">PENDAPATAN_PESANAN</field>
+            <field name="transaction_date">2026-04-20 14:00:00</field>
+            <field name="reference_id">M4FR/INV/DEMO/002 - DP</field>
+            <field name="note">Pembayaran DP 50% dari CV Fashion Bersama</field>
+            <field name="state">posted</field>
+        </record>
+        <!-- Pengeluaran: Vendor Bill-1 -->
+        <record id="demo_cf_out_bill1" model="m4fr.cash.flow">
+            <field name="amount">4590000</field>
+            <field name="direction">OUT</field>
+            <field name="category">PEMBELIAN_BAHAN_BAKU</field>
+            <field name="transaction_date">2026-03-12 15:00:00</field>
+            <field name="reference_id">Kain Katun 50kg - PT Tekstil Nusantara</field>
+            <field name="note">Pembayaran vendor bill kain katun premium</field>
+            <field name="state">posted</field>
+        </record>
+        <!-- Pengeluaran: Operasional Maret -->
+        <record id="demo_cf_out_gaji_mar" model="m4fr.cash.flow">
+            <field name="amount">2000000</field>
+            <field name="direction">OUT</field>
+            <field name="category">BEBAN_OPERASIONAL</field>
+            <field name="transaction_date">2026-03-25 09:00:00</field>
+            <field name="reference_id">OPS/GAJI/MAR-2026</field>
+            <field name="note">Gaji karyawan bulan Maret 2026</field>
+            <field name="state">posted</field>
+        </record>
+        <record id="demo_cf_out_listrik_mar" model="m4fr.cash.flow">
+            <field name="amount">500000</field>
+            <field name="direction">OUT</field>
+            <field name="category">BEBAN_OPERASIONAL</field>
+            <field name="transaction_date">2026-03-28 10:00:00</field>
+            <field name="reference_id">OPS/LISTRIK/MAR-2026</field>
+            <field name="note">Tagihan listrik dan air Maret 2026</field>
+            <field name="state">posted</field>
+        </record>
+        <!-- Pengeluaran: Operasional April -->
+        <record id="demo_cf_out_gaji_apr" model="m4fr.cash.flow">
+            <field name="amount">2000000</field>
+            <field name="direction">OUT</field>
+            <field name="category">BEBAN_OPERASIONAL</field>
+            <field name="transaction_date">2026-04-25 09:00:00</field>
+            <field name="reference_id">OPS/GAJI/APR-2026</field>
+            <field name="note">Gaji karyawan bulan April 2026</field>
+            <field name="state">posted</field>
+        </record>
+        <record id="demo_cf_out_sewa_apr" model="m4fr.cash.flow">
+            <field name="amount">1500000</field>
+            <field name="direction">OUT</field>
+            <field name="category">BEBAN_OPERASIONAL</field>
+            <field name="transaction_date">2026-04-01 09:00:00</field>
+            <field name="reference_id">OPS/SEWA/APR-2026</field>
+            <field name="note">Sewa gudang produksi April 2026</field>
+            <field name="state">posted</field>
+        </record>
+        <!-- Pengeluaran: Operasional Mei -->
+        <record id="demo_cf_out_gaji_mei" model="m4fr.cash.flow">
+            <field name="amount">2000000</field>
+            <field name="direction">OUT</field>
+            <field name="category">BEBAN_OPERASIONAL</field>
+            <field name="transaction_date">2026-05-05 09:00:00</field>
+            <field name="reference_id">OPS/GAJI/MEI-2026</field>
+            <field name="note">Gaji karyawan bulan Mei 2026</field>
+            <field name="state">posted</field>
+        </record>
+
+        <!-- ============================================================
+             D5 — TEST USERS (password semua: Password123)
+             _sync_role_groups() dipanggil otomatis via create() override
+             ============================================================ -->
+        <record id="demo_user_direktur" model="res.users">
+            <field name="name">Direktur Demo</field>
+            <field name="login">direktur@m4fr.test</field>
+            <field name="password">Password123</field>
+            <field name="role">jb01</field>
+        </record>
+        <record id="demo_user_keuangan" model="res.users">
+            <field name="name">Manajer Keuangan Demo</field>
+            <field name="login">keuangan@m4fr.test</field>
+            <field name="password">Password123</field>
+            <field name="role">jb02</field>
+        </record>
+        <record id="demo_user_produksi" model="res.users">
+            <field name="name">Manajer Produksi Demo</field>
+            <field name="login">produksi@m4fr.test</field>
+            <field name="password">Password123</field>
+            <field name="role">jb03</field>
+        </record>
+        <record id="demo_user_admin_m4fr" model="res.users">
+            <field name="name">Admin Demo</field>
+            <field name="login">admin@m4fr.test</field>
+            <field name="password">Password123</field>
+            <field name="role">jb04</field>
+        </record>
+        <record id="demo_user_kepala" model="res.users">
+            <field name="name">Kepala Produksi Demo</field>
+            <field name="login">kepala@m4fr.test</field>
+            <field name="password">Password123</field>
+            <field name="role">jb05</field>
+        </record>
+
+    </data>
+</odoo>
