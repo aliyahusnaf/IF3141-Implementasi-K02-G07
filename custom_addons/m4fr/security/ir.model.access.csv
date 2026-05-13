@@ -4,7 +4,7 @@ access_m4fr_client_direktur,m4fr.client.direktur,model_m4fr_client,group_m4fr_di
 access_m4fr_client_finance,m4fr.client.finance,model_m4fr_client,group_m4fr_manajer_keuangan,1,0,0,0
 access_m4fr_order_status_admin,m4fr.order.status.admin,model_m4fr_order_status,group_m4fr_admin,1,1,1,1
 access_m4fr_order_status_direktur,m4fr.order.status.direktur,model_m4fr_order_status,group_m4fr_direktur,1,1,1,1
-access_m4fr_order_status_finance,m4fr.order.status.finance,model_m4fr_order_status,group_m4fr_manajer_keuangan,1,1,1,0
+access_m4fr_order_status_finance,m4fr.order.status.finance,model_m4fr_order_status,group_m4fr_manajer_keuangan,1,0,0,0
 access_m4fr_order_status_prod_man,m4fr.order.status.prod.man,model_m4fr_order_status,group_m4fr_manajer_produksi,1,0,0,0
 access_m4fr_order_status_prod_head,m4fr.order.status.prod.head,model_m4fr_order_status,group_m4fr_kepala_produksi,1,1,1,0
 access_m4fr_sale_order_admin,sale.order.admin,sale.model_sale_order,group_m4fr_admin,1,1,1,1
@@ -27,6 +27,7 @@ access_m4fr_raw_material_finance,raw.material.finance,model_m4fr_raw_material,m4
 access_m4fr_material_movement_admin,material.movement.admin,model_m4fr_material_movement,m4fr.group_m4fr_admin,1,1,1,1
 access_m4fr_material_movement_direktur,material.movement.direktur,model_m4fr_material_movement,m4fr.group_m4fr_direktur,1,1,1,1
 access_m4fr_material_movement_kepala,material.movement.kepala,model_m4fr_material_movement,m4fr.group_m4fr_kepala_produksi,1,1,1,0
+access_m4fr_material_movement_finance,material.movement.finance,model_m4fr_material_movement,m4fr.group_m4fr_manajer_keuangan,1,1,1,0
 access_m4fr_vendor_admin,vendor.admin,model_m4fr_vendor,m4fr.group_m4fr_admin,1,1,1,1
 access_m4fr_vendor_direktur,vendor.direktur,model_m4fr_vendor,m4fr.group_m4fr_direktur,1,1,1,1
 access_m4fr_vendor_finance,vendor.finance,model_m4fr_vendor,m4fr.group_m4fr_manajer_keuangan,1,1,1,1
