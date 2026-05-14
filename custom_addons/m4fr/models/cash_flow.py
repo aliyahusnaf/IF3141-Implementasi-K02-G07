@@ -6,6 +6,14 @@ class CashFlow(models.Model):
     _order = 'transaction_date desc'
 
     amount = fields.Float(string='Nominal', required=True)
+    
+    signed_amount = fields.Float(
+        string='Nominal Saldo', 
+        compute='_compute_signed_amount', 
+        store=True, # Harus di-store agar Odoo bisa melakukan 'sum' di tampilan tree
+        help='Nilai minus jika uang keluar, positif jika uang masuk'
+    )
+
     category = fields.Selection([
         ('PENDAPATAN_PESANAN', 'Pendapatan Pesanan'),
         ('PEMBELIAN_BAHAN_BAKU', 'Pembelian Bahan Baku'),
@@ -26,9 +34,16 @@ class CashFlow(models.Model):
         ('posted', 'Posted')
     ], string='Status', default='posted', readonly=True)
 
+    @api.depends('amount', 'direction')
+    def _compute_signed_amount(self):
+        for record in self:
+            if record.direction == 'OUT':
+                record.signed_amount = -record.amount
+            else:
+                record.signed_amount = record.amount
+
     @api.model
     def createJournalEntry(self, amount, direction, category, reference_id):
-        """ Kontrak method yang ditunggu oleh D2 (Invoice) dan D3 (Inventaris) """
         # Internal posting: bypass ACL because end-users are intentionally read-only on m4fr.cash.flow.
         entry = self.sudo().create({
             'amount': float(amount),

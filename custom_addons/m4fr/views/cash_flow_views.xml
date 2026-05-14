@@ -8,7 +8,9 @@
                 <field name="transaction_date"/>
                 <field name="category"/>
                 <field name="direction"/>
-                <field name="amount" sum="Total"/>
+                
+                <field name="signed_amount" sum="Total Saldo" decoration-danger="signed_amount &lt; 0" decoration-success="signed_amount &gt; 0"/>
+                
                 <field name="reference_id"/>
                 <field name="state" widget="badge" decoration-success="state == 'posted'"/>
             </tree>
