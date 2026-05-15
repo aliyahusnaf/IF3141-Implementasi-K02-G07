@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="action_m4fr_dashboard" model="ir.actions.client">
+        <field name="name">Dashboard Keuangan</field>
+        <field name="tag">m4fr_dashboard</field>
+    </record>
+
+    <menuitem id="menu_m4fr_dashboard"
+              name="Dashboard"
+              parent="menu_m4fr_root"
+              action="action_m4fr_dashboard"
+              sequence="1"
+              groups="m4fr.group_m4fr_direktur"/>
+</odoo>

@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ── Extend form sale.order ─────────────────────────────────────────── -->
+    <record id="view_sale_order_form_m4fr" model="ir.ui.view">
+        <field name="name">sale.order.form.m4fr</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.view_order_form"/>
+        <field name="arch" type="xml">
+
+            <!-- Sembunyikan tombol invoice bawaan Odoo supaya alur hanya lewat tombol custom -->
+            <xpath expr="//button[@id='create_invoice']" position="replace"/>
+            <xpath expr="//button[@id='create_invoice_percentage']" position="replace"/>
+            <xpath expr="//button[@name='action_view_invoice']" position="replace"/>
+
+            <!-- Tambahkan tombol utama untuk tagihan custom M4FR -->
+            <xpath expr="//header" position="inside">
+                <field name="invoice_count" invisible="1"/>
+                <button name="action_create_invoice"
+                        string="Buat Tagihan"
+                        type="object"
+                        class="btn-primary"
+                        groups="m4fr.group_m4fr_admin,m4fr.group_m4fr_direktur,m4fr.group_m4fr_manajer_keuangan"
+                        invisible="state not in ('sale', 'done')"/>
+            </xpath>
+
+            <!-- Tambahkan deadline_at di grup order_details (atas form) -->
+            <xpath expr="//group[@name='order_details']/field[@name='payment_term_id']" position="after">
+                <field name="deadline_at" widget="datetime" required="1"/>
+            </xpath>
+
+            <!-- Ganti order_line di tab Order Lines ke order_line_items (domain di Python) -->
+            <xpath expr="//page[@name='order_lines']//field[@name='order_line']" position="attributes">
+                <attribute name="name">order_line_items</attribute>
+                <attribute name="context">{'default_is_adjustment': False}</attribute>
+            </xpath>
+
+            <!-- Tambahkan kolom spesifikasi di tree order_line_items -->
+            <xpath expr="//field[@name='order_line_items']//tree//field[@name='name'][@widget='section_and_note_text']" position="after">
+                <field name="specification" optional="show" string="Spesifikasi"/>
+            </xpath>
+
+            <!-- Tab Penyesuaian: pakai order_line_adjustments (domain di Python) -->
+            <xpath expr="//page[@name='order_lines']" position="after">
+                <page string="Penyesuaian" name="order_adjustment">
+                    <field name="order_line_adjustments"
+                           context="{'default_is_adjustment': True}">
+                        <tree editable="bottom">
+                            <field name="is_adjustment" column_invisible="1"/>
+                            <field name="product_id" string="Produk/Jenis" optional="show"/>
+                            <field name="name" string="Keterangan"/>
+                            <field name="price_unit" string="Jumlah" widget="monetary"/>
+                            <field name="product_uom_qty" string="Qty" optional="hide"/>
+                            <field name="currency_id" column_invisible="1"/>
+                            <field name="price_subtotal" string="Subtotal" widget="monetary"/>
+                        </tree>
+                    </field>
+                </page>
+            </xpath>
+
+            <!-- Tab Status Produksi -->
+            <xpath expr="//page[@name='order_adjustment']" position="after">
+                <page string="Status Produksi" name="production_status_tab">
+                    <group>
+                        <field name="production_status" widget="statusbar"
+                               statusbar_visible="pending,material_received,cutting,sewing,qc,done"
+                               readonly="1"/>
+                        <field name="next_production_status" readonly="1" string="Tahap Berikutnya"/>
+                        <field name="is_production_done" invisible="1"/>
+                    </group>
+                    <div>
+                        <button name="action_open_update_production_status"
+                                string="Update ke Tahap Berikutnya"
+                                type="object"
+                                class="btn-primary"
+                                invisible="state not in ('sale', 'done') or is_production_done"/>
+                    </div>
+                    <separator string="Riwayat Perubahan Status"/>
+                    <field name="order_status_ids" readonly="1">
+                        <tree>
+                            <field name="changed_at" string="Waktu"/>
+                            <field name="status" string="Status"/>
+                            <field name="changed_by" string="Diubah Oleh"/>
+                            <field name="note" string="Catatan"/>
+                        </tree>
+                    </field>
+                </page>
+            </xpath>
+
+        </field>
+    </record>
+
+    <!-- ── Action: semua pesanan (termasuk draft/quotation) ─────────────────── -->
+    <record id="action_m4fr_all_sale_orders" model="ir.actions.act_window">
+        <field name="name">Pesanan</field>
+        <field name="res_model">sale.order</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- ── Extend search sale.order — filter produksi & group by klien ──────── -->
+    <record id="view_sale_order_search_m4fr" model="ir.ui.view">
+        <field name="name">sale.order.search.m4fr</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.sale_order_view_search_inherit_sale"/>
+        <field name="arch" type="xml">
+            <xpath expr="//search" position="inside">
+                <filter string="Belum Dimulai" name="filter_pending"
+                        domain="[('production_status','=','pending')]"/>
+                <filter string="Bahan Diterima" name="filter_material"
+                        domain="[('production_status','=','material_received')]"/>
+                <filter string="Proses Cutting" name="filter_cutting"
+                        domain="[('production_status','=','cutting')]"/>
+                <filter string="Proses Jahit" name="filter_sewing"
+                        domain="[('production_status','=','sewing')]"/>
+                <filter string="QC" name="filter_qc"
+                        domain="[('production_status','=','qc')]"/>
+                <filter string="Selesai Produksi" name="filter_done"
+                        domain="[('production_status','=','done')]"/>
+                <separator/>
+                <group expand="0" string="Group By">
+                    <filter string="Klien" name="group_partner"
+                            context="{'group_by': 'partner_id'}"/>
+                    <filter string="Status Produksi" name="group_production"
+                            context="{'group_by': 'production_status'}"/>
+                    <filter string="Tenggat (Bulan)" name="group_deadline"
+                            context="{'group_by': 'deadline_at:month'}"/>
+                </group>
+            </xpath>
+        </field>
+    </record>
+
+    <!-- ── Extend list sale.order — tambah kolom deadline & produksi ──────── -->
+    <record id="view_sale_order_tree_m4fr" model="ir.ui.view">
+        <field name="name">sale.order.tree.m4fr</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sale.sale_order_tree"/>
+        <field name="arch" type="xml">
+            <xpath expr="//field[@name='date_order']" position="after">
+                <field name="deadline_at" optional="show" string="Tenggat"/>
+                <field name="status_display" optional="show" string="Status"/>
+            </xpath>
+        </field>
+    </record>
+
+</odoo>
+
+
+

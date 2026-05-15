@@ -1,0 +1,56 @@
+<odoo>
+    <record id="view_m4fr_raw_material_tree" model="ir.ui.view">
+        <field name="name">m4fr.raw.material.tree</field>
+        <field name="model">m4fr.raw.material</field>
+        <field name="arch" type="xml">
+            <tree decoration-danger="stock &lt; 5">
+                <field name="raw_material_id"/>
+                <field name="name"/>
+                <field name="unit_name"/>
+                <field name="standard_unit_price"/>
+                <field name="stock"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_m4fr_raw_material_form" model="ir.ui.view">
+        <field name="name">m4fr.raw.material.form</field>
+        <field name="model">m4fr.raw.material</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="%(m4fr.action_m4fr_material_movement)d" 
+                                type="action" class="oe_stat_button" icon="fa-exchange"
+                                context="{'search_default_raw_material_id': active_id}">
+                            <div class="o_stat_info">
+                                <span class="o_stat_text">Riwayat Mutasi</span>
+                            </div>
+                        </button>
+                    </div>
+                    <group>
+                        <group>
+                            <field name="raw_material_id"/>
+                            <field name="name"/>
+                            <field name="unit_name"/>
+                        </group>
+                        <group>
+                            <field name="standard_unit_price"/>
+                            <field name="stock" readonly="1"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_m4fr_raw_material" model="ir.actions.act_window">
+        <field name="name">Stok Bahan</field>
+        <field name="res_model">m4fr.raw.material</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="menu_m4fr_raw_material" name="Stok Bahan" 
+              parent="menu_m4fr_inventory_root" 
+              action="action_m4fr_raw_material" sequence="10"/>
+</odoo>

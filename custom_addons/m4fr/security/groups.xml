@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="0">
+        <record id="module_category_m4fr" model="ir.module.category">
+            <field name="name">M4FR Management</field>
+            <field name="description">Kategori akses untuk modul M4FR</field>
+            <field name="sequence">10</field>
+        </record>
+
+        <!-- JB-02: Manajer Keuangan — akses via CSV, tidak perlu imply sale group -->
+        <record id="group_m4fr_manajer_keuangan" model="res.groups">
+            <field name="name">M4FR: Manajer Keuangan (JB-02)</field>
+            <field name="category_id" ref="module_category_m4fr"/>
+        </record>
+
+        <!-- JB-03: Manajer Produksi — read-only, tidak perlu imply sale group -->
+        <record id="group_m4fr_manajer_produksi" model="res.groups">
+            <field name="name">M4FR: Manajer Produksi (JB-03)</field>
+            <field name="category_id" ref="module_category_m4fr"/>
+        </record>
+
+        <!-- JB-04: Admin — imply sales_team agar bisa pakai full SO form + chatter -->
+        <record id="group_m4fr_admin" model="res.groups">
+            <field name="name">M4FR: Admin (JB-04)</field>
+            <field name="category_id" ref="module_category_m4fr"/>
+            <field name="implied_ids" eval="[(4, ref('sales_team.group_sale_manager'))]"/>
+        </record>
+
+        <!-- JB-05: Kepala Produksi — hanya update status, tidak perlu sale group -->
+        <record id="group_m4fr_kepala_produksi" model="res.groups">
+            <field name="name">M4FR: Kepala Produksi (JB-05)</field>
+            <field name="category_id" ref="module_category_m4fr"/>
+        </record>
+
+        <!-- JB-01: Direktur — implies semua grup + sales_team + erp_manager untuk kelola user -->
+        <record id="group_m4fr_direktur" model="res.groups">
+            <field name="name">M4FR: Direktur (JB-01)</field>
+            <field name="category_id" ref="module_category_m4fr"/>
+            <field name="implied_ids" eval="[
+                (4, ref('group_m4fr_manajer_keuangan')),
+                (4, ref('group_m4fr_manajer_produksi')),
+                (4, ref('group_m4fr_admin')),
+                (4, ref('group_m4fr_kepala_produksi')),
+                (4, ref('sales_team.group_sale_manager')),
+                (4, ref('base.group_erp_manager')),
+            ]"/>
+        </record>
+    </data>
+</odoo>

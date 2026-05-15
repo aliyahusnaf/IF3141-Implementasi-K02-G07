@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        <!-- Session idle timeout: 1800 detik = 30 menit -->
+        <record id="auth_timeout_delay" model="ir.config_parameter">
+            <field name="key">auth_timeout.delay</field>
+            <field name="value">1800</field>
+        </record>
+    </data>
+
+    <data noupdate="0">
+        <record id="base.user_admin" model="res.users">
+            <field name="role">jb01</field>
+        </record>
+    </data>
+</odoo>

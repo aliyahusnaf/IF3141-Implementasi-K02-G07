@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="action_report_tax_financial" model="ir.actions.report">
+        <field name="name">Laporan Laba Rugi &amp; Pajak UMKM</field>
+        <field name="model">m4fr.tax.controller</field>
+        <field name="report_type">qweb-pdf</field>
+        <field name="report_name">m4fr.report_tax_financial_template</field>
+        <field name="report_file">m4fr.report_tax_financial_template</field>
+        <field name="binding_model_id" ref="model_m4fr_tax_controller"/>
+        <field name="binding_type">report</field>
+    </record>
+
+    <template id="report_tax_financial_template">
+        <t t-call="web.html_container">
+            <t t-foreach="docs" t-as="doc">
+                <t t-call="web.external_layout">
+                    <div class="page">
+                        <h2>Laporan Keuangan &amp; Pajak UMKM</h2>
+                        <p><strong>Periode:</strong> <span t-field="doc.period_start"/> sampai <span t-field="doc.period_end"/></p>
+                        
+                        <table class="table table-sm mt-4">
+                            <thead>
+                                <tr>
+                                    <th>Indikator Keuangan</th>
+                                    <th class="text-right">Nominal</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Total Omzet Bruto</td>
+                                    <td class="text-right"><span t-field="doc.gross_omzet"/></td>
+                                </tr>
+                                <tr>
+                                    <td>Total Beban Operasional</td>
+                                    <td class="text-right"><span t-field="doc.operational_expense"/></td>
+                                </tr>
+                                <tr>
+                                    <td><strong>Laba Bersih</strong></td>
+                                    <td class="text-right"><strong><span t-field="doc.net_profit"/></strong></td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <div class="mt-5 p-3" style="background-color: #f8f9fa; border-radius: 5px;">
+                            <h4>Kewajiban Pajak</h4>
+                            <p>Berdasarkan PP No. 55 Tahun 2022 (Pajak UMKM 0.5% dari Omzet Bruto):</p>
+                            <h3 class="text-primary text-center mt-3">
+                                <span t-field="doc.estimated_tax"/>
+                            </h3>
+                        </div>
+                    </div>
+                </t>
+            </t>
+        </t>
+    </template>
+</odoo>

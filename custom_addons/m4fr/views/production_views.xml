@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <!-- ── UC-12: Daftar Pesanan Aktif (Manajer Produksi — read-only) ───── -->
+    <record id="view_active_orders_tree" model="ir.ui.view">
+        <field name="name">sale.order.active.tree</field>
+        <field name="model">sale.order</field>
+        <field name="arch" type="xml">
+            <tree create="false" edit="false" delete="false">
+                <field name="name" string="No. SO"/>
+                <field name="partner_id" string="Klien"/>
+                <field name="date_order" string="Tgl Pesanan"/>
+                <field name="deadline_at" string="Tenggat" widget="datetime"/>
+                <field name="state" string="Status SO"/>
+                <field name="production_status" string="Status Produksi"/>
+                <field name="amount_total" string="Total" widget="monetary"/>
+                <field name="currency_id" column_invisible="1"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_active_orders_form_readonly" model="ir.ui.view">
+        <field name="name">sale.order.active.form.readonly</field>
+        <field name="model">sale.order</field>
+        <field name="priority">999</field>
+        <field name="arch" type="xml">
+            <form create="false" edit="false" delete="false">
+                <sheet>
+                    <group>
+                        <field name="company_id" invisible="1"/>
+                        <group string="Informasi Pesanan">
+                            <field name="name" string="No. SO"/>
+                            <field name="partner_id" string="Klien"/>
+                            <field name="date_order" string="Tanggal Pesanan"/>
+                            <field name="deadline_at" string="Tenggat Waktu" widget="datetime"/>
+                            <field name="state" string="Status SO"/>
+                        </group>
+                        <group string="Status Produksi">
+                            <field name="production_status" widget="statusbar"
+                                   statusbar_visible="pending,material_received,cutting,sewing,qc,done"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Item Pesanan">
+                            <field name="order_line" domain="[('is_adjustment', '=', False)]" readonly="1">
+                                <tree>
+                                    <field name="name" string="Produk"/>
+                                    <field name="specification" string="Spesifikasi"/>
+                                    <field name="product_uom_qty" string="Qty"/>
+                                    <field name="product_uom" string="Satuan"/>
+                                    <field name="price_unit" string="Harga Satuan"/>
+                                    <field name="price_subtotal" string="Subtotal"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Riwayat Status Produksi">
+                            <field name="order_status_ids" readonly="1">
+                                <tree>
+                                    <field name="changed_at" string="Waktu"/>
+                                    <field name="status" string="Status"/>
+                                    <field name="changed_by" string="Diubah Oleh"/>
+                                    <field name="note" string="Catatan"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_active_orders_manajer_produksi" model="ir.actions.act_window">
+        <field name="name">Daftar Pesanan Aktif</field>
+        <field name="res_model">sale.order</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('state', '=', 'sale'), ('production_status', '!=', 'done')]</field>
+        <field name="context">{'search_default_filter_to_invoice': 0}</field>
+        <field name="view_ids" eval="[
+            (5, 0, 0),
+            (0, 0, {'view_mode': 'tree', 'view_id': ref('view_active_orders_tree')}),
+            (0, 0, {'view_mode': 'form', 'view_id': ref('view_active_orders_form_readonly')}),
+        ]"/>
+    </record>
+
+    <!-- ── UC-13: Update Status Produksi (Kepala Produksi) ───────────────── -->
+    <record id="view_production_update_tree" model="ir.ui.view">
+        <field name="name">sale.order.production.update.tree</field>
+        <field name="model">sale.order</field>
+        <field name="arch" type="xml">
+            <tree create="false" edit="false" delete="false">
+                <field name="name" string="No. SO"/>
+                <field name="partner_id" string="Klien"/>
+                <field name="deadline_at" string="Tenggat" widget="datetime"/>
+                <field name="production_status" string="Status Produksi"/>
+                <field name="next_production_status" string="Tahap Berikutnya"/>
+                <field name="currency_id" column_invisible="1"/>
+                <button name="action_open_update_production_status"
+                        string="Update Status"
+                        type="object"
+                        icon="fa-refresh"
+                        invisible="is_production_done == True"
+                        class="btn-primary"/>
+                <field name="is_production_done" column_invisible="1"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Form view untuk JB-05: sama seperti readonly tapi ada tombol Update di header -->
+    <record id="view_production_update_form" model="ir.ui.view">
+        <field name="name">sale.order.production.update.form</field>
+        <field name="model">sale.order</field>
+        <field name="arch" type="xml">
+            <form create="false" delete="false">
+                <header>
+                    <button name="action_open_update_production_status"
+                            string="Update ke Tahap Berikutnya"
+                            type="object"
+                            class="btn-primary"
+                            invisible="state not in ('sale', 'done') or is_production_done"/>
+                    <field name="production_status" widget="statusbar"
+                           statusbar_visible="pending,material_received,cutting,sewing,qc,done"
+                           readonly="1"/>
+                </header>
+                <sheet>
+                    <group>
+                        <field name="company_id" invisible="1"/>
+                        <field name="is_production_done" invisible="1"/>
+                        <group string="Informasi Pesanan">
+                            <field name="name" string="No. SO" readonly="1"/>
+                            <field name="partner_id" string="Klien" readonly="1"/>
+                            <field name="date_order" string="Tanggal Pesanan" readonly="1"/>
+                            <field name="deadline_at" string="Tenggat Waktu" readonly="1" widget="datetime"/>
+                            <field name="state" string="Status SO" readonly="1"/>
+                        </group>
+                        <group string="Status Produksi">
+                            <field name="production_status" readonly="1"/>
+                            <field name="next_production_status" readonly="1" string="Tahap Berikutnya"/>
+                        </group>
+                    </group>
+                    <notebook>
+                        <page string="Item Pesanan">
+                            <field name="order_line" domain="[('is_adjustment', '=', False)]" readonly="1">
+                                <tree>
+                                    <field name="name" string="Produk"/>
+                                    <field name="specification" string="Spesifikasi"/>
+                                    <field name="product_uom_qty" string="Qty"/>
+                                    <field name="product_uom" string="Satuan"/>
+                                </tree>
+                            </field>
+                        </page>
+                        <page string="Riwayat Status Produksi">
+                            <field name="order_status_ids" readonly="1">
+                                <tree>
+                                    <field name="changed_at" string="Waktu"/>
+                                    <field name="status" string="Status"/>
+                                    <field name="changed_by" string="Diubah Oleh"/>
+                                    <field name="note" string="Catatan"/>
+                                </tree>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="action_production_status_update" model="ir.actions.act_window">
+        <field name="name">Status Produksi</field>
+        <field name="res_model">sale.order</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('state', '=', 'sale')]</field>
+        <field name="view_ids" eval="[
+            (5, 0, 0),
+            (0, 0, {'view_mode': 'tree', 'view_id': ref('view_production_update_tree')}),
+            (0, 0, {'view_mode': 'form', 'view_id': ref('view_production_update_form')}),
+        ]"/>
+    </record>
+
+</odoo>

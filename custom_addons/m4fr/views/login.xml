@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <template id="m4fr_login_logo" inherit_id="web.login_layout" name="M4FR Login Logo">
+        <xpath expr="//img[contains(@t-attf-src, 'company_logo')]" position="replace">
+            <img src="/m4fr/static/src/img/Logo_M4FR.png" alt="M4FR by Ataya"
+                 style="max-height:120px; max-width:100%; width:auto; display:block; margin:0 auto;"/>
+        </xpath>
+    </template>
+</odoo>

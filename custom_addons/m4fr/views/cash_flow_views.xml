@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <record id="view_m4fr_cash_flow_tree" model="ir.ui.view">
+        <field name="name">m4fr.cash.flow.tree</field>
+        <field name="model">m4fr.cash.flow</field>
+        <field name="arch" type="xml">
+            <tree string="Buku Besar Arus Kas" create="false" edit="false" delete="false">
+                <field name="transaction_date"/>
+                <field name="category"/>
+                <field name="direction"/>
+                
+                <field name="signed_amount" sum="Total Saldo" decoration-danger="signed_amount &lt; 0" decoration-success="signed_amount &gt; 0"/>
+                
+                <field name="reference_id"/>
+                <field name="state" widget="badge" decoration-success="state == 'posted'"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="view_m4fr_cash_flow_search" model="ir.ui.view">
+        <field name="name">m4fr.cash.flow.search</field>
+        <field name="model">m4fr.cash.flow</field>
+        <field name="arch" type="xml">
+            <search string="Cari Arus Kas">
+                <field name="reference_id"/>
+                <field name="category"/>
+                <filter string="Kas Masuk (IN)" name="filter_in" domain="[('direction', '=', 'IN')]"/>
+                <filter string="Kas Keluar (OUT)" name="filter_out" domain="[('direction', '=', 'OUT')]"/>
+                <group expand="0" string="Group By">
+                    <filter string="Bulan" name="group_by_month" context="{'group_by': 'transaction_date:month'}"/>
+                    <filter string="Arah" name="group_by_direction" context="{'group_by': 'direction'}"/>
+                </group>
+            </search>
+        </field>
+    </record>
+
+    <record id="action_m4fr_cash_flow" model="ir.actions.act_window">
+        <field name="name">Buku Besar</field>
+        <field name="res_model">m4fr.cash.flow</field>
+        <field name="view_mode">tree</field>
+        <field name="context">{'search_default_group_by_month': 1}</field>
+    </record>
+
+    <menuitem id="menu_m4fr_accounting_root" name="Akuntansi" sequence="40"
+              parent="menu_m4fr_root"
+              groups="m4fr.group_m4fr_direktur,m4fr.group_m4fr_manajer_keuangan"/>
+    <menuitem id="menu_m4fr_ledger" name="Buku Besar" parent="menu_m4fr_accounting_root" action="action_m4fr_cash_flow" sequence="10"/>
+</odoo>
