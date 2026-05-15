@@ -234,6 +234,38 @@ Logout dari user `admin`, lalu login dengan kredensial role yang ingin diuji (li
 
 ![F-09 - Filter Periode](docs/screenshots/f09-filter-periode.png)
 
+#### F-10: Pembuatan Invoice Otomatis
+
+**Prerequisite:** Login sebagai Admin.
+
+1. Buka Sales Order yang telah dikonfirmasi dari menu **M4FR > Penjualan > Pesanan**.
+2. Pastikan SO sudah berstatus `Sales Order`.
+3. Klik tombol **Buat Invoice** pada bagian atas form.
+4. Pada wizard invoice, tentukan aturan pembayaran DP yang diinginkan (default 50% dari total tagihan).
+5. Klik **Konfirmasi** untuk membuat draft invoice.
+6. Setelah invoice berhasil dibuat, klik tombol **Kirim Invoice** atau gunakan fitur **Export PDF** untuk mengunduh invoice.
+
+> **Expected result:** Sistem membuat draft invoice secara otomatis berdasarkan data SO, lengkap dengan nomor invoice dan nominal pembayaran DP yang telah dihitung otomatis.
+
+![F-10 - Pembuatan Invoice Otomatis](docs/screenshots/f10-pembuatan-invoice.png)
+
+#### F-11: Validasi Pembayaran Uang Muka dan Pelunasan
+
+**Prerequisite:** Login sebagai Admin.
+
+1. Buka Sales Order yang dicari dari menu **M4FR > Penjualan > Pesanan**.
+2. Masuk ke halaman invoice melalui tombol **Buat Tagihan**.
+2. Pastikan invoice sudah berstatus `Posted`.
+3. Klik tombol **Validasi Pembayaran**.
+4. Pada wizard pembayaran, masukkan nominal pembayaran DP yang diterima pelanggan.
+5. Klik **Validate** untuk mencatat pembayaran DP.
+6. Setelah pelanggan melakukan pelunasan, ulangi proses validasi pembayaran untuk sisa tagihan.
+7. Sistem akan otomatis memperbarui status invoice dan status pembayaran pada Sales Order terkait.
+
+> **Expected result:** Pembayaran DP dan pelunasan tercatat pada sistem, status invoice berubah menjadi `Paid` setelah seluruh pembayaran selesai, dan transaksi kas masuk otomatis tercatat pada Buku Besar.
+
+![F-11 - Validasi Pembayaran](docs/screenshots/f11-validasi-pembayaran.png)
+
 ---
 
 ### C. (Opsional) Setup Python Virtual Environment
