@@ -266,6 +266,50 @@ Logout dari user `admin`, lalu login dengan kredensial role yang ingin diuji (li
 
 ![F-11 - Validasi Pembayaran](docs/screenshots/f11-validasi-pembayaran.png)
 
+#### F-12: Pemantauan Buku Besar Arus Kas
+
+**Prerequisite:** Login sebagai Direktur atau Manager Keuangan.
+
+1. Buka modul Akuntansi dari menu **M4FR > Akuntansi > Buku Besar**.
+2. Sistem akan menampilkan daftar seluruh riwayat transaksi keuangan (uang masuk dan uang keluar).
+3. Perhatikan bahwa halaman ini bersifat **read-only** ntuk menjaga integritas data otomatis.
+4. Gunakan **search bar** di kanan atas untuk menyaring data dengan klik **Filter** (Kas Masuk / Kas Keluar).
+5. Terdapat juga opsi **Group By**(Bulan / Kategori) untuk mengelompokkan tampilan transaksi.
+6. Pada bagian paling bawah tabel, terdapat Total Saldo yang terhitung secara otomatis dari selisih debit dan kredit.
+
+> **Expected result:** Riwayat transaksi kas masuk dan keluar ditampilkan secara komprehensif, aman dari manipulasi manual, dan menunjukkan perhitungan total saldo akhir yang presisi.
+
+![F-12 - Pemantauan Buku Besar Arus Kas](docs/screenshots/f12-pemantauan-buku-besar.png)
+
+#### F-13: Ekspor Data Buku Besar
+
+**Prerequisite:** Login sebagai Direktur atau Manager Keuangan.
+
+1. Buka modul Akuntansi dari menu **M4FR > Akuntansi > Buku Besar**.
+2. Pilih data transaksi yang ingin diekspor dengan mencentang kotak (checkbox).
+3. Klik tombol **Action** yang muncul di bagian tengah atas, lalu pilih **Export**.
+4. Pada jendela ekspor yang muncul, pilih format keluaran yang diinginkan.
+5. Pilih dan pastikan kolom yang ingin diunduh (Tanggal, Kategori, Arah, Nominal) sudah berada di daftar sebelah kanan.
+6. Klik tombol **Export** di kiri bawah jendela.
+
+> **Expected result:** Seluruh riwayat transaksi arus kas yang dipilih berhasil diekspor dan diunduh ke dalam format spreadsheet untuk keperluan audit atau pencadangan lokal.
+
+![F-13 - Ekspor Data Buku Besar](docs/screenshots/f13-ekspor-buku-besar.png)
+
+#### F-14: Laporan Laba/Rugi dan Pajak UMKM
+
+**Prerequisite:** Login sebagai Direktur atau Manager Keuangan.
+
+1. Buka modul Akuntansi dari menu **M4FR > Akuntansi > Laporan Laba/Rugi**.
+2. Pada wizard interaktif yang muncul, masukkan tanggal pada kolom `Mulai Periode` dan `Akhir Periode`.
+3. Sistem akan secara otomatis mengalkulasi dan menampilkan 4 indikator utama secara real-time: **Omzet Bruto**, **Beban Operasional**, **Laba Bersih**, dan **Estimasi Pajak UMKM (0,5%)**.
+4. Klik tombol **Ekspor PDF**  di bagian bawah form untuk mencetak laporan.
+5. Dokumen PDF berisikan detail keuangan dan perhitungan kewajiban Pajak PP No. 55 Tahun 2022 akan terunduh.
+
+> **Expected result:** engguna dapat melihat metrik performa keuangan perusahaan berdasarkan rentang tanggal tertentu, serta berhasil mengunduh dokumen resmi Laporan Laba/Rugi & Pajak UMKM berformat PDF.
+
+![F-14 - Laporan Laba/Rugi dan Pajak UMKM](docs/screenshots/f14-laporan-laba-rugi.png)
+
 ---
 
 ### C. (Opsional) Setup Python Virtual Environment
