@@ -306,7 +306,7 @@ Logout dari user `admin`, lalu login dengan kredensial role yang ingin diuji (li
 4. Klik tombol **Ekspor PDF**  di bagian bawah form untuk mencetak laporan.
 5. Dokumen PDF berisikan detail keuangan dan perhitungan kewajiban Pajak PP No. 55 Tahun 2022 akan terunduh.
 
-> **Expected result:** engguna dapat melihat metrik performa keuangan perusahaan berdasarkan rentang tanggal tertentu, serta berhasil mengunduh dokumen resmi Laporan Laba/Rugi & Pajak UMKM berformat PDF.
+> **Expected result:** Pengguna dapat melihat metrik performa keuangan perusahaan berdasarkan rentang tanggal tertentu, serta berhasil mengunduh dokumen resmi Laporan Laba/Rugi & Pajak UMKM berformat PDF.
 
 ![F-14 - Laporan Laba/Rugi dan Pajak UMKM](docs/screenshots/f14-laporan-laba-rugi.png)
 
