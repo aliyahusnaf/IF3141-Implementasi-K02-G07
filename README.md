@@ -311,6 +311,16 @@ Logout dari user `admin`, lalu login dengan kredensial role yang ingin diuji (li
 ![F-14 - Laporan Laba/Rugi dan Pajak UMKM](docs/screenshots/f14-laporan-laba-rugi.png)
 
 ---
+#### F-19: Login
+
+1. Masukkan email yang valid dan sudah terdaftar sebagai peran yang sesuai dengan keinginan
+2. Masukkan password yang valid dan sudah terdaftar
+3. Pilih basis data yang ingin digunakan sebagai inisialisasi basis data
+4. Klik tombol login
+
+> **Expected result:** Pengguna dapat masuk ke dalam sistem sesuai dengan perannya.
+
+![F-19 - Login](docs/screenshots/f19-login.jpg)
 
 ### C. (Opsional) Setup Python Virtual Environment
 
