@@ -310,7 +310,68 @@ Logout dari user `admin`, lalu login dengan kredensial role yang ingin diuji (li
 
 ![F-14 - Laporan Laba/Rugi dan Pajak UMKM](docs/screenshots/f14-laporan-laba-rugi.png)
 
----
+#### F-15: Daftar Stok Bahan Baku
+
+**Prerequisite:** Login sebagai Manajer Produksi, Admin, atau Kepala Produksi.
+
+1. Pada menu navigasi utama, pilih modul Inventaris, kemudian klik menu Stok Bahan.
+2. Tekan tombol Baru untuk menampilkan form buat bahan baku.
+3. Isi semua atribut bahan baku baru.
+4. Tekan tombol simpan untuk menambahkan bahan baku baru yang akan ditampilkan di daftar bahan baku.
+5. Tekan suatu entri pada daftar untuk menampilkan detail.
+6. Pada antarmuka detail atribut dapat diubah lagi.
+
+
+> **Expected result:** Pengguna dapat melihat semua bahan baku dan stoknya, serta dapat menambah dan mengedit bahan baku untuk dicatat oleh sistem. 
+
+![F-15 - Daftar Stok Bahan Baku](docs/screenshots/f15-bahan-baku.png)
+
+#### F-16: Mutasi Stok Bahan Baku
+
+**Prerequisite:** Login sebagai Admin atau Kepala Produksi.
+
+1. Pada menu navigasi utama, pilih modul Inventaris, kemudian klik menu Mutasi Stok.
+2. Tekan tombol Baru untuk menampilkan form membuat record mutasi stok bahan baku.
+3. Isi semua atribut record mutasi stok bahan baku.
+4. Tekan tombol simpan untuk menambahkan record mutasi stok bahan baku yang akan ditampilkan di daftar mutasi stok bahan baku.
+5. Tekan suatu entri pada daftar untuk menampilkan detail.
+6. Pada antarmuka detail atribut dapat diubah lagi.
+
+
+> **Expected result:** Pengguna dapat melihat semua mutasi stok bahan baku, serta dapat menambah dan mengedit mutasi stok bahan baku dengan riwayat.
+
+![F-16: Mutasi Stok Bahan Baku](docs/screenshots/f16-mutasi-stok.png)
+
+#### F-17: Tagihan Vendor
+
+**Prerequisite:** Login sebagai Admin.
+
+1. Pada menu navigasi utama, pilih modul Inventaris, kemudian klik menu Vendor.
+2. Tekan tombol Baru untuk menampilkan form membuat vendor baru.
+3. Isi semua atribut vendor baru.
+4. Tekan tombol simpan untuk menambahkan vendor yang akan ditampilkan di daftar vendor.
+5. Tekan suatu entri pada daftar untuk menampilkan detail.
+6. Pada antarmuka detail atribut dapat diubah lagi.
+
+> **Expected result:** Pengguna dapat melihat semua tagihan vendor yang ada dari riwayat, serta dapat menambah dan mengedit tagihan vendor yang sudah ada. Juga dapat melanjutkan suatu tagihan vendor dari suatu status ke status berikutnya.
+
+![F-17: Tagihan Vendor](docs/screenshots/f17-tagihan-vendor.png)
+
+#### F-18: Daftar Vendor
+
+**Prerequisite:** Login sebagai Admin.
+
+1. Pada menu navigasi utama, pilih modul Inventaris, kemudian klik menu Vendor.
+2. Tekan tombol Baru untuk menampilkan form membuat vendor baru.
+3. Isi semua atribut vendor baru.
+4. Tekan tombol simpan untuk menambahkan vendor yang akan ditampilkan di daftar vendor.
+5. Tekan suatu entri pada daftar untuk menampilkan detail.
+6. Pada antarmuka detail atribut dapat diubah lagi.
+
+> **Expected result:** Pengguna dapat melihat semua vendor yang tercatat di sistem, serta dapat menambah dan mengedit vendor.
+
+![F-18: Daftar Vendor](docs/screenshots/f18-vendor.png)
+
 #### F-19: Login
 
 1. Masukkan email yang valid dan sudah terdaftar sebagai peran yang sesuai dengan keinginan
